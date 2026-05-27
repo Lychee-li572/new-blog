@@ -23,7 +23,16 @@ function decodeDataUrl(url: string): string {
   const comma = url.indexOf(",")
   if (comma === -1) return url
   const payload = url.slice(comma + 1)
-  try { return atob(payload) } catch { return payload }
+  try {
+    const binary = atob(payload)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i)
+    }
+    return new TextDecoder("utf-8").decode(bytes)
+  } catch {
+    return payload
+  }
 }
 
 function getTravelContent(filename: string): string {
