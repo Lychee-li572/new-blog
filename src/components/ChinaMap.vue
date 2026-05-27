@@ -5,8 +5,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue"
 import { useRouter } from "vue-router"
-import * as echarts from "echarts"
+import * as echarts from "echarts/core"
+import { GeoComponent } from "echarts/components"
+import { EffectScatterChart } from "echarts/charts"
+import { CanvasRenderer } from "echarts/renderers"
 import { cities, getVisitedProvinces } from "@/data/cities"
+
+echarts.use([GeoComponent, EffectScatterChart, CanvasRenderer])
 
 const router = useRouter()
 const chartRef = ref<HTMLDivElement>()
@@ -19,7 +24,7 @@ function handleResize() {
 function handleClick(params: any) {
   if (params.seriesType === "effectScatter") {
     const city = cities.find(c => c.name === params.name)
-    if (city) router.push(`/city/${city.id}`)
+    if (city) router.push("/city/" + city.id)
   }
 }
 
@@ -36,9 +41,9 @@ onMounted(async () => {
   chart.setOption({
     tooltip: {
       trigger: "item",
-      formatter: (p: any) => {
-        if (p.seriesType === "effectScatter") return `<b>${p.name}</b>`
-        return `${p.name}${visited.includes(p.name) ? " ✓" : ""}`
+      formatter: function (p: any) {
+        if (p.seriesType === "effectScatter") return "<b>" + p.name + "</b>"
+        return p.name + (visited.includes(p.name) ? " \u2713" : "")
       }
     },
     geo: {

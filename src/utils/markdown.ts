@@ -1,16 +1,9 @@
-import MarkdownIt from "markdown-it"
-import hljs from "highlight.js"
+﻿import MarkdownIt from "markdown-it"
 
 const md = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
-  highlight: (str: string, lang: string) => {
-    if (lang && hljs.getLanguage(lang)) {
-      return `<pre><code class="hljs language-${lang}">${hljs.highlight(str, { language: lang }).value}</code></pre>`
-    }
-    return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>`
-  }
 })
 
 // Add heading IDs

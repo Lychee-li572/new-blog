@@ -1,2 +1,2 @@
-@import "tailwindcss";
-@import "highlight.js/styles/github.css";
+﻿@import "tailwindcss";
+@plugin "@tailwindcss/typography";

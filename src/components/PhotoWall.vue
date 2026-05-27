@@ -3,14 +3,16 @@
     <div
       v-for="(url, i) in photos"
       :key="i"
-      class="overflow-hidden rounded-lg shadow-md cursor-pointer"
-      @click="$emit('preview', url)"
+      class="overflow-hidden rounded-lg shadow-md cursor-pointer bg-stone-200"
+      @click="('preview', url)"
     >
       <img
         :src="url"
-        :alt="`photo ${i + 1}`"
+        :alt="photo "
         class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
         loading="lazy"
+        decoding="async"
+        fetchpriority="low"
       />
     </div>
   </div>
