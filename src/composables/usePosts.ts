@@ -13,6 +13,28 @@ interface Post {
 
 const posts = ref<Post[]>([])
 
+function resolveRaw(raw: unknown): string {
+  if (typeof raw === "string") return raw.startsWith("data:") ? decodeDataUrl(raw) : raw
+  const mod = raw as { default?: unknown }
+  if (mod?.default) {
+    if (typeof mod.default === "function") {
+      const val = mod.default()
+      return typeof val === "string" && val.startsWith("data:") ? decodeDataUrl(val) : String(val)
+    }
+    if (typeof mod.default === "string") {
+      return mod.default.startsWith("data:") ? decodeDataUrl(mod.default) : mod.default
+    }
+  }
+  return ""
+}
+
+function decodeDataUrl(url: string): string {
+  const comma = url.indexOf(",")
+  if (comma === -1) return url
+  const payload = url.slice(comma + 1)
+  try { return atob(payload) } catch { return payload }
+}
+
 export function usePosts() {
   if (posts.value.length > 0) return { posts }
 
@@ -20,7 +42,7 @@ export function usePosts() {
 
   for (const [path, raw] of Object.entries(modules)) {
     const slug = (path.split("/").pop() ?? "").replace(/\.md$/, "")
-    const content = typeof raw === "string" ? raw : (raw as { default: string }).default
+    const content = resolveRaw(raw)
 
     const meta = parseFrontmatter(content)
     const body = content.replace(/^---[\s\S]*?---\n*/, "").trim()
