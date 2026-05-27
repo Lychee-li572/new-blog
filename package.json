@@ -1,0 +1,33 @@
+{
+    "name":  "blogtest",
+    "version":  "1.0.0",
+    "main":  "index.js",
+    "directories":  {
+                        "doc":  "docs"
+                    },
+    "scripts":  {
+                    "preview":  "vite preview",
+                    "build":  "vite build",
+                    "dev":  "vite --port 3000"
+                },
+    "keywords":  [
+
+                 ],
+    "author":  "",
+    "license":  "ISC",
+    "description":  "",
+    "dependencies":  {
+                         "echarts":  "^6.1.0",
+                         "highlight.js":  "^11.11.1",
+                         "markdown-it":  "^14.2.0",
+                         "vue":  "^3.5.34",
+                         "vue-router":  "^5.0.7"
+                     },
+    "devDependencies":  {
+                            "@tailwindcss/vite":  "^4.3.0",
+                            "@vitejs/plugin-vue":  "^6.0.7",
+                            "tailwindcss":  "^4.3.0",
+                            "typescript":  "^6.0.3",
+                            "vite":  "^8.0.14"
+                        }
+}
