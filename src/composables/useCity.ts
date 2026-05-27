@@ -1,4 +1,4 @@
-import { ref, watchEffect } from "vue"
+﻿import { ref, watchEffect } from "vue"
 import { getCityById } from "@/data/cities"
 import { renderMarkdown } from "@/utils/markdown"
 
@@ -7,10 +7,11 @@ const cityModules = import.meta.glob("/src/content/cities/*.md", { as: "raw", ea
 function getTravelContent(filename: string): string {
   for (const [path, raw] of Object.entries(cityModules)) {
     if (path.endsWith("/" + filename)) {
-      return renderMarkdown(raw as string)
+      const content = typeof raw === "string" ? raw : (raw as { default: string }).default
+      return renderMarkdown(content)
     }
   }
-  return "<p class='text-stone-400'>暂无游记</p>"
+  return '<p class="text-stone-400">暂无游记</p>'
 }
 
 export function useCity(cityId: () => string) {

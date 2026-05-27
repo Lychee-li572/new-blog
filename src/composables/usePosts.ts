@@ -1,4 +1,4 @@
-import { ref } from "vue"
+﻿import { ref } from "vue"
 import { renderMarkdown } from "@/utils/markdown"
 
 interface Post {
@@ -20,7 +20,7 @@ export function usePosts() {
 
   for (const [path, raw] of Object.entries(modules)) {
     const slug = (path.split("/").pop() ?? "").replace(/\.md$/, "")
-    const content = raw as string
+    const content = typeof raw === "string" ? raw : (raw as { default: string }).default
 
     const meta = parseFrontmatter(content)
     const body = content.replace(/^---[\s\S]*?---\n*/, "").trim()
