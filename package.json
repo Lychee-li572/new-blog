@@ -15,6 +15,7 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
+        "@giscus/vue": "^3.1.1",
         "@tailwindcss/typography": "^0.5.19",
         "echarts": "^6.1.0",
         "highlight.js": "^11.11.1",

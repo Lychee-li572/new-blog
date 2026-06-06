@@ -53,6 +53,14 @@ export const cities: City[] = [
       "黄山/IMG_3996.jpg"
     ],
     travelFile: "huangshan.md"
+  },
+  {
+    id: "zhoushan",
+    name: "舟山",
+    province: "浙江省",
+    coordinates: [122.2063, 30.0197],
+    photos: [],
+    travelFile: "zhoushan.md"
   }
 ]
 
