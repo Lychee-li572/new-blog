@@ -1,10 +1,14 @@
-﻿/**
+/**
  * 图片优化工具
  *
  * CDN 策略：
  *   - 主 CDN: jsDelivr（全球节点，国内部分可达）
  *   - 备用 1: Gcore jsDelivr 镜像
  *   - 备用 2: GitHub Raw 直连（兜底，慢）
+ *
+ * 图片列表由构建时 Vite 插件自动生成（见 vite.config.ts 中的 photosPlugin），
+ * 通过 GitHub Contents API 拉取，写入 src/data/photos.json。
+ * 运行时无需网络请求，零限流风险。
  */
 
 // ==================== CDN 配置 ====================
