@@ -1,20 +1,47 @@
 <template>
-  <nav class="sticky top-0 z-50 bg-[#fdf6ec]/90 dark:bg-stone-900/90 backdrop-blur border-b border-amber-200/50 dark:border-stone-700/50">
-    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-      <router-link to="/" class="text-lg font-bold text-amber-800 dark:text-amber-200 tracking-wide">少吃熏鱼</router-link>
-      <div class="flex gap-6 text-sm items-center">
-        <router-link to="/" class="text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">足迹地图</router-link>
-        <router-link to="/blog" class="text-stone-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">博客</router-link>
-        <!-- 明暗主题切换按钮 -->
+  <nav
+    class="sticky top-0 z-50 h-14"
+    :style="{
+      background: 'color-mix(in srgb, var(--bg-base) 90%, transparent)',
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
+      borderBottom: '1px solid var(--border)',
+    }"
+  >
+    <div class="max-w-[1100px] mx-auto px-6 h-full flex items-center justify-between">
+      <!-- 品牌名 -->
+      <router-link
+        to="/"
+        class="text-lg no-underline transition-colors"
+        style="font-family: var(--font-brand); color: var(--accent-primary)"
+      >
+        少吃熏鱼
+      </router-link>
+
+      <!-- 导航链接 -->
+      <div class="flex items-center gap-6">
+        <router-link
+          v-for="link in navLinks"
+          :key="link.path"
+          :to="link.path"
+          class="text-sm transition-colors no-underline"
+          style="font-family: var(--font-sans); color: var(--text-secondary)"
+          @mouseenter="$event.target.style.color = 'var(--accent-primary)'"
+          @mouseleave="$event.target.style.color = 'var(--text-secondary)'"
+        >
+          {{ link.label }}
+        </router-link>
+
+        <!-- 主题切换 -->
         <button
           @click="toggle"
-          class="ml-2 px-2 py-1 rounded text-xs font-medium border transition-colors
-                 border-amber-300 dark:border-stone-600
-                 text-amber-700 dark:text-stone-300
-                 hover:bg-amber-100 dark:hover:bg-stone-700"
-          :title="theme === 'light' ? '切换暗色模式' : '切换亮色模式'"
+          class="w-8 h-8 flex items-center justify-center rounded-lg text-base border-none cursor-pointer transition-all"
+          style="background: var(--accent-lighter); color: var(--accent-primary)"
+          @mouseenter="$event.target.style.background = 'var(--accent-light)'"
+          @mouseleave="$event.target.style.background = 'var(--accent-lighter)'"
+          :title="theme === 'dark' ? '切换亮色模式' : '切换暗色模式'"
         >
-          {{ theme === "light" ? "🌙" : "☀️" }}
+          {{ theme === "dark" ? "☀️" : "🌙" }}
         </button>
       </div>
     </div>
@@ -25,4 +52,12 @@
 import { useTheme } from "@/composables/useTheme"
 
 const { theme, toggle } = useTheme()
+
+const navLinks = [
+  { path: "/", label: "首页" },
+  { path: "/map", label: "地图" },
+  { path: "/games", label: "游戏" },
+  { path: "/toolbox", label: "工具箱" },
+  { path: "/blog", label: "博客" },
+]
 </script>
