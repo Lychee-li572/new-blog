@@ -3,14 +3,21 @@
 > **日期：** 2026-06-22
 > **项目：** 少吃熏鱼 博客重构
 > **状态：** 设计确认，待实施
+> **视觉方向：** 在现有暖色奶油底 + amber 色系基础上升级，加入系统化 CSS 变量、字体方案和微动画。克制、书卷气，内容优先。
 
 ---
 
 ## 一、整体风格定位
 
-**赛博朋克 + 液态玻璃（Cyberpunk + Glassmorphism）**
+**温暖书卷风（Warm Scholarly）**
 
-深色底上漂浮着半透明毛玻璃面板，边缘透出霓虹光晕。背景不是纯黑，而是由动态 CSS 渐变网格和微点阵纹理营造氛围。整体气质：有科技感但不冰冷，有个性但不喧闹。
+保留现有奶油底暖色调，不做颠覆性视觉改造，而是在当前基础上做系统化升级：
+- 建立完整的 CSS 变量体系（目前颜色散落在 Tailwind 类名中）
+- 引入定制字体方案（目前使用浏览器默认字体栈）
+- 加入克制的微动画（悬停、滚动、过渡）
+- 保持暗色模式支持，优化暗色配色一致性
+
+整体气质：温暖、安静、有质感的个人博客，让人愿意停下来阅读。
 
 ---
 
@@ -21,28 +28,29 @@
 | 用途 | 字体 | 来源 | 说明 |
 |---|---|---|---|
 | **品牌名/Logo** | **站酷快乐体**（ZCOOL KuaiLe） | Google Fonts | 笔画圆润活泼，辨识度高，已确认选型 |
-| **英文标题/数字/标签** | Space Grotesk | Google Fonts | 几何无衬线，字重 400/600/700，字母间距紧凑到 -1px，有冲击力 |
-| **中文正文** | Noto Sans SC | Google Fonts | 字重 300（正文）/400（强调）/700（小标题），可读性优先 |
+| **英文标题/数字/标签** | Space Grotesk | Google Fonts | 几何无衬线，字重 400/600/700，现代感但不冰冷 |
+| **中文正文/标题** | Noto Serif SC | Google Fonts | 宋体风格衬线体，字重 400/700，书卷气，阅读舒适 |
+| **中文辅助文字** | Noto Sans SC | Google Fonts | 无衬线，字重 300/400，用于标签、时间戳等辅助信息 |
 
-### 2.2 品牌名 Display 字体
+### 2.2 字体加载
 
-**已确认：站酷快乐体（ZCOOL KuaiLe）**
-
-Google Fonts 加载：
 ```html
-<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400&family=Space+Grotesk:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 ```
-CSS 引用：`font-family: "ZCOOL KuaiLe", cursive;`
 
-- 免费商用，笔画圆润活泼，辨识度高
-- 仅用于品牌名/Logo 展示，不用于正文
-- 可配合渐变填充或单色使用
+CSS 引用：
+- 品牌名：`font-family: "ZCOOL KuaiLe", cursive;`
+- 英文标题：`font-family: "Space Grotesk", sans-serif;`
+- 中文正文：`font-family: "Noto Serif SC", "Songti SC", serif;`
+- 辅助文字：`font-family: "Noto Sans SC", "PingFang SC", sans-serif;`
 
 ### 2.3 字体加载策略
 
-- 使用 Google Fonts CDN 加载
-- 品牌 Display 字体仅在 Header/首页 Hero 使用，可通过 `font-display: swap` 优化首屏
-- 中文字体使用 `font-display: optional` 或按字符集子集化，避免全量加载
+- 使用 `font-display: swap` 避免 FOIT
+- 品牌字体（ZCOOL KuaiLe）仅在 Header 和首页 Hero 使用
+- 正文衬线体可按需加载（`display=optional` 或子集化），避免全量加载
 
 ---
 
@@ -52,236 +60,235 @@ CSS 引用：`font-family: "ZCOOL KuaiLe", cursive;`
 
 ```css
 :root {
-  /* === 暗色模式（默认） === */
+  /* === 亮色模式（默认） === */
 
   /* 背景层级 */
-  --bg-deep: #0b0b14;
-  --bg-surface: rgba(14, 14, 28, 0.6);
+  --bg-base: #fdf6ec;              /* 暖奶油底色 */
+  --bg-surface: #ffffff/70;         /* 卡片/面板表面 */
+  --bg-elevated: #ffffff;           /* 弹窗/浮层 */
 
-  /* 液态玻璃 */
-  --glass: rgba(255, 255, 255, 0.035);
-  --glass-thick: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-hover: rgba(255, 255, 255, 0.15);
-  --glass-blur: 24px;
-
-  /* 霓虹色 */
-  --neon-cyan: #00e5ff;
-  --neon-magenta: #ff2d78;
-  --neon-amber: #ffb300;
-  --neon-purple: #a855f7;
-
-  /* 渐变 */
-  --gradient-brand: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+  /* 强调色系（amber 为主） */
+  --accent-primary: #d97706;       /* amber-700，主要强调 */
+  --accent-secondary: #f59e0b;     /* amber-500，次要强调 */
+  --accent-light: #fde68a;         /* amber-200，浅底色 */
+  --accent-lighter: #fef3c7;       /* amber-100，标签/徽章背景 */
 
   /* 文字 */
-  --text-primary: #f5f3ff;
-  --text-body: #c8c4d8;
-  --text-secondary: #7e7a92;
+  --text-primary: #451a03;         /* amber-950，主标题 */
+  --text-body: #78716c;            /* stone-500，正文 */
+  --text-secondary: #a8a29e;       /* stone-400，辅助信息 */
 
-  /* 微点阵 */
-  --dot-color: rgba(255, 255, 255, 0.03);
-  --dot-size: 1px;
-  --dot-gap: 30px;
+  /* 边框与分隔 */
+  --border: rgba(217, 119, 6, 0.2);          /* amber 半透明 */
+  --border-hover: rgba(217, 119, 6, 0.4);
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* 间距 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
 }
 
-/* === 日间变体（亮色模式） === */
+/* === 暗色模式 === */
 
-.dark-off {
-  --bg-deep: #f0ede6;
-  --bg-surface: rgba(255, 255, 255, 0.7);
-  --glass: rgba(255, 255, 255, 0.5);
-  --glass-thick: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(0, 0, 0, 0.06);
-  --glass-border-hover: rgba(0, 0, 0, 0.12);
-  --neon-cyan: #0891b2;
-  --neon-magenta: #db2777;
-  --neon-amber: #d97706;
-  --neon-purple: #7c3aed;
-  --text-primary: #1a1625;
-  --text-body: #4a4458;
-  --text-secondary: #8b85a8;
-  --dot-color: rgba(0, 0, 0, 0.04);
+.dark {
+  --bg-base: #1c1917;
+  --bg-surface: rgba(28, 25, 23, 0.8);
+  --bg-elevated: #292524;
+
+  --accent-primary: #fbbf24;
+  --accent-secondary: #f59e0b;
+  --accent-light: rgba(251, 191, 36, 0.15);
+  --accent-lighter: rgba(251, 191, 36, 0.08);
+
+  --text-primary: #fafaf9;
+  --text-body: #a8a29e;
+  --text-secondary: #78716c;
+
+  --border: rgba(251, 191, 36, 0.15);
+  --border-hover: rgba(251, 191, 36, 0.3);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 ```
 
-### 3.2 暗色模式设计原则
+### 3.2 亮色模式设计原则
 
-- 背景深但不纯黑（`#0b0b14` 带微蓝调），有层次感
-- 霓虹色用于关键交互元素（链接、按钮、标签、装饰线）
-- 正文文字使用柔和灰紫（`#c8c4d8`），不是纯白，长时间阅读不刺眼
-- 玻璃面板边框极细（`0.08` 透明度），hover 时提亮
+- 背景 `#fdf6ec` 保持不变，这是博客的视觉锚点
+- 强调色从 `--accent-primary` 到 `--accent-lighter` 形成层级
+- 正文用 stone 系灰褐色，不用纯黑，保持温暖感
+- 卡片表面使用 `rgba(255,255,255,0.7)` 半透明白，与奶油底融合
 
-### 3.3 日间变体设计原则
+### 3.3 暗色模式设计原则
 
-- 背景为温暖米色（`#f0ede6`），呼应"少吃熏鱼"的生活感
-- 玻璃面板变为白色半透明（`rgba(255,255,255,0.5)`），像磨砂玻璃窗
-- 霓虹色降低饱和度、提高明度，保持色彩倾向但不刺眼
-- 暗色模式下优雅，日间模式下温暖
+- 背景 `#1c1917`（stone-900）暖调深色，不用冷灰或纯黑
+- 强调色亮度提升（amber-700 → amber-400），在深底上保持醒目
+- 文字使用 stone 系色阶，保持与亮色模式一致的层级关系
+- 阴影透明度提高，在深底上仍可见
 
 ---
 
-## 四、背景系统
+## 四、背景
 
-### 4.1 概述
-
-背景不使用图片，而是纯 CSS 实现的**动态渐变网格 + 微点阵纹理**叠加，营造深空/赛博氛围。
-
-### 4.2 渐变网格（Mesh Gradient）
-
-使用多个固定定位的 radial-gradient 元素，颜色为霓虹色的极低透明度版本，缓慢 CSS 动画移动位置。
-
-```css
-.ambient-1 {
-  position: fixed;
-  top: -20%; right: -10%;
-  width: 60vw; height: 60vh;
-  background: radial-gradient(ellipse, rgba(0, 229, 255, 0.06) 0%, transparent 60%);
-  animation: drift-1 20s ease-in-out infinite alternate;
-  pointer-events: none; z-index: 0;
-}
-```
-
-### 4.3 微点阵纹理（Micro-dot Pattern）
-
-```css
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: radial-gradient(var(--dot-color) var(--dot-size), transparent var(--dot-size));
-  background-size: var(--dot-gap) var(--dot-gap);
-  pointer-events: none; z-index: 0;
-}
-```
-
-### 4.4 性能考虑
-
-- 所有渐变和动画使用 `transform` 或 `opacity` 触发 GPU 加速
-- `will-change: transform` 应用于动画元素
-- `prefers-reduced-motion` 时暂停背景动画
-- 背景元素 `pointer-events: none` 不影响交互
+背景保持现有 `#fdf6ec` 奶油底色，不做额外图片或渐变。背景的丰富感通过内容卡片的层次和微动画来实现。
 
 ---
 
-## 五、液态玻璃（Glassmorphism）设计规范
+## 五、卡片与组件
 
-### 5.1 标准玻璃面板
+### 5.1 标准卡片
 
 ```css
-.glass-panel {
-  background: var(--glass);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  padding: 28px;
-  transition: all 0.4s ease;
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 ```
 
-### 5.2 玻璃面板交互
+### 5.2 交互规范
 
-- **静止态：** 极细半透明边框 + 低透明度填充 + backdrop-blur
-- **Hover 态：** 边框提亮 + 内部微光（inset box-shadow）+ 轻微上移（translateY(-4px)）+ 顶部渐变装饰线显现
-- **内光效果：** `box-shadow: 0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)`
-
-### 5.3 玻璃层级
-
-| 层级 | 使用场景 | blur 值 | 透明度 |
-|---|---|---|---|
-| **L1 - 导航** | 顶部 sticky 导航栏 | 30px | 0.5 |
-| **L2 - 内容卡片** | 博客卡片、工具卡片 | 24px | 0.035 |
-| **L3 - 浮层** | 弹窗、下拉菜单 | 20px | 0.06 |
+- 所有可交互元素 hover 时有过渡动画（`transition: all 0.3s ease`）
+- 卡片 hover：上移 2px + 阴影加深 + 边框提亮
+- 链接 hover：颜色过渡到 `--accent-primary`
+- 按钮 hover：背景提亮 + 轻微缩放
 
 ---
 
-## 六、品牌 Logo 处理
+## 六、微动画系统
+
+### 6.1 页面入场
+
+```css
+/* 卡片淡入 + 上移 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 错开入场（卡片列表） */
+.card:nth-child(1) { animation-delay: 0ms; }
+.card:nth-child(2) { animation-delay: 60ms; }
+.card:nth-child(3) { animation-delay: 120ms; }
+/* ... */
+
+.card {
+  animation: fadeInUp 0.5s ease-out backwards;
+}
+```
+
+### 6.2 滚动触发
+
+使用 `IntersectionObserver` 为进入视口的元素添加 `.visible` class：
+
+```css
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+```
+
+### 6.3 装饰性微动画（克制使用）
+
+- **顶部滚动进度条**：页面顶部 2px 高度，amber 渐变色，随滚动填充
+- **品牌名悬停**：轻微颜色过渡，不用花哨动效
+- **标签页切换**：内容区域淡入过渡
+- **Markdown 内容**：`<h2>` 标题下方装饰线从左向右展开
+
+### 6.4 性能与无障碍
+
+- 仅对 `transform` 和 `opacity` 做动画，避免触发 layout
+- `@media (prefers-reduced-motion: reduce)` 时禁用所有非必要动画：
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+```
+
+---
+
+## 七、品牌 Logo 处理
 
 - 使用**站酷快乐体**（ZCOOL KuaiLe）渲染"少吃熏鱼"
-- 默认状态为 `--text-primary`（暗色模式下近白），可通过 CSS 变量覆盖
+- 亮色模式：`--accent-primary`（amber-700）
+- 暗色模式：`--accent-primary`（amber-400）
 - 不添加额外符号/图标，字体本身即是品牌识别
-- 在 Header 中保持适中字号（约 24-28px），不喧宾夺主
-- 在首页 Hero 区域可放大至 Display 级别
-- 可选渐变填充：`background: var(--gradient-brand)` + `-webkit-background-clip: text`
+- Header 中字号约 20-24px，自然融入导航栏
 
 ---
 
-## 七、导航栏设计
+## 八、导航栏设计
 
-### 7.1 结构
+### 8.1 结构
 
 ```
-[站酷快乐体品牌名]                            [首页] [博客] [工具箱] [足迹] [关于] [主题切换]
+[站酷快乐体品牌名]                           [足迹地图] [博客] [🌙/☀️]
 ```
 
-### 7.2 样式
+### 8.2 样式
 
-- 固定顶部，`z-index: 100`
-- 高度 64px，最大宽度 1100px 居中
-- 液态玻璃 L1 层级（blur 30px，透明度 0.5）
-- 底部 1px 玻璃边框分隔
-- 品牌名在左，导航链接在右
-- 导航链接：Space Grotesk 14px，`--text-secondary`，hover 时变为 `--text-primary`
-- 明暗切换按钮在最右，使用简单 emoji 图标
+- 固定顶部，`z-index: 50`
+- 高度 56px，最大宽度 1100px 居中
+- 背景色：`--bg-base/90` + `backdrop-blur`
+- 底部 1px `--border` 分隔
+- 导航链接：Noto Sans SC 14px，`--text-secondary`，hover 时 `--accent-primary`
+- 明暗切换：emoji 按钮，hover 时 `--accent-lighter` 背景
 
 ---
 
-## 八、页面布局规范
+## 九、页面布局规范
 
-### 8.1 全局容器
+### 9.1 全局容器
 
 ```css
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 24px;
-  position: relative; z-index: 1;
+  padding: 0 var(--space-lg);
 }
 ```
 
-### 8.2 首页 Hero 区
+### 9.2 首页
 
-- 顶部 overline 标签（`--neon-cyan`，Space Grotesk 13px，大写，左侧装饰线）
-- 大标题（Space Grotesk 56px，字重 700，行高 1.1）
-- 副标题（Noto Sans SC 17px，字重 300，`--text-body`）
-- 标签行（圆角药丸标签，hover 时边框提亮）
+- 保持现有地图首页（ChinaMap）或改为文章列表首页，待确认
+- 文章卡片：两列网格，`grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))`
+- 卡片内容：标题（Noto Serif SC 700）+ 日期 + 摘要 + 标签
 
-### 8.3 博客卡片网格
+### 9.3 博客文章详情页
 
-- CSS Grid，`grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))`
-- 间距 20px
-- 支持特色大卡（`grid-column: 1 / -1`），双栏布局：左视觉区 + 右内容区
-- 卡片 hover：上移 4px + 边框提亮 + inset 微光
-
-### 8.4 博客文章详情页
-
-- 左侧 TOC 目录（仅 lg 右侧显示）
-- 右侧正文内容，最大宽度受限
-- 使用 `prose` 排版样式（需适配深色主题）
+- 左侧 TOC 目录（仅 lg+ 右侧显示）
+- 右侧正文（Noto Serif SC 400，最大宽度受限，行高 1.8）
 - 底部 Giscus 评论区
-
----
-
-## 九、无障碍与动效
-
-### 9.1 prefers-reduced-motion
-
-```css
-@media (prefers-reduced-motion: reduce) {
-  .ambient-1, .ambient-2, .ambient-3 { animation: none; }
-  * { transition-duration: 0.01ms !important; }
-}
-```
-
-### 9.2 键盘导航
-
-- 所有交互元素需有 `:focus-visible` 样式
-- 焦点环使用 `--neon-cyan` 色，`2px solid`，带 `outline-offset: 2px`
-
-### 9.3 对比度
-
-- 正文文字在暗色模式下对比度 >= 4.5:1（WCAG AA）
-- 霓虹色仅用于装饰和辅助，不作为唯一信息传达手段
+- 标题下方：日期 + 阅读时间 + 标签行
 
 ---
 
@@ -292,12 +299,10 @@ src/
   styles/
     tokens.css          # CSS 变量定义（色彩、字体、间距、阴影）
     base.css            # 全局重置和基础样式
-    glass.css           # 液态玻璃组件样式
-    background.css      # 背景渐变网格和点阵
-    animations.css      # 动画关键帧
+    animations.css      # 动画关键帧和微动画类
   components/
-    GlassCard.vue       # 通用玻璃卡片组件
-    AppHeader.vue       # 导航栏（含品牌名 + 链接 + 主题切换）
+    GlassCard.vue       # 可重用卡片组件（使用 CSS 变量）
+    AppHeader.vue       # 导航栏
     ...
 ```
 
@@ -305,19 +310,20 @@ src/
 
 ## 十一、待办事项
 
-- [ ] 确认明暗模式切换按钮的具体样式
-- [ ] 确认首页 Hero 区是否需要额外视觉元素（如代码片段装饰）
+- [ ] 确认首页是否保持地图入口或改为文章列表
 - [ ] 输出完整 CSS 变量表到 `tokens.css`
 - [ ] 创建组件原型
 
 ---
 
-## 十二、参考 Mockup
+## 十二、与现有代码的差异
 
-已生成三个 HTML/CSS 交互式 mockup 供对比：
-
-- `tmp/mockups/terminal-style.html` — 极客终端风（A）
-- `tmp/mockups/geometric-style.html` — 未来几何风（B）
-- `tmp/mockups/contrast-style.html` — 混搭对比风（C）**[选定]**
-
-方案 C 为最终方向，背景由纯静态改为动态渐变网格。
+| 方面 | 现有 | 升级后 |
+|---|---|---|
+| 颜色定义 | 散落在 Tailwind 类名中 | 统一 CSS 变量 |
+| 字体 | 浏览器默认字体栈 | 站酷快乐体 + Space Grotesk + Noto Serif SC |
+| 暗色模式 | Tailwind `dark:` 前缀 | CSS 变量 + `.dark` class |
+| 动画 | 几乎没有 | 入场动画 + 滚动触发 + 装饰微动画 |
+| 组件 | 内联样式 | CSS 变量驱动的可重用组件 |
+| 背景 | `#fdf6ec` 硬编码 | `--bg-base` 变量 |
+| 圆角/阴影 | 各组件自定义 | 统一 token |
