@@ -26,9 +26,11 @@ const loading = ref(false)
 const editing = ref<any>(null)
 const emptyPost = { id: "", slug: "", title: "", summary: "", content: "", category: "", tags: [], published: false }
 
-onMounted(() => {
-  restoreSession()
-  if (isAuthenticated.value) loadPosts()
+onMounted(async () => {
+  await restoreSession()
+  if (isAuthenticated.value) {
+    await loadPosts()
+  }
 })
 
 async function loadPosts() {

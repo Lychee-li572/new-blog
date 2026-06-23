@@ -80,7 +80,10 @@
 
     <!-- 右侧：精选文章 -->
     <div class="flex-1 w-full">
-      <FeaturedCard v-if="latestPost" :post="latestPost" />
+      <div v-if="loading" class="card p-8 text-center" style="color: var(--text-secondary)">
+        加载中...
+      </div>
+      <FeaturedCard v-else-if="latestPost" :post="latestPost" />
     </div>
   </section>
 </template>
@@ -92,7 +95,7 @@ import { cities } from "@/data/cities"
 import photos from "@/data/photos.json"
 import FeaturedCard from "@/components/FeaturedCard.vue"
 
-const { posts } = usePosts()
+const { posts, loading } = usePosts()
 
 const latestPost = computed(() => posts.value[0] ?? null)
 

@@ -1,5 +1,6 @@
 <template>
-  <article v-if="post" class="max-w-[1100px] mx-auto px-6 py-16">
+  <div v-if="loading" class="text-center py-20" style="color: var(--text-secondary)">加载中...</div>
+  <article v-else-if="post" class="max-w-[1100px] mx-auto px-6 py-16">
     <router-link
       to="/blog"
       class="inline-block mb-6 text-sm no-underline transition-colors"
@@ -35,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import { usePosts } from "@/composables/usePosts"
 import { useTheme } from "@/composables/useTheme"
@@ -44,8 +45,9 @@ import TOC from "@/components/TOC.vue"
 import BlogComment from "@/components/BlogComment.vue"
 
 const route = useRoute()
-const { posts } = usePosts()
+const { posts, loading, loadPosts } = usePosts()
 const { theme } = useTheme()
+onMounted(() => loadPosts())
 
 const post = computed(() => posts.value.find((p) => p.slug === route.params.slug))
 const toc = computed(() => (post.value ? extractTOC(post.value.raw) : []))

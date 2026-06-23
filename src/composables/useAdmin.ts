@@ -16,10 +16,9 @@ export function useAdmin() {
     isAuthenticated.value = false
   }
 
-  function restoreSession() {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) isAuthenticated.value = true
-    })
+  async function restoreSession() {
+    const { data } = await supabase.auth.getSession()
+    if (data.session) isAuthenticated.value = true
   }
 
   // 直接查询 Supabase（用 anon key + RLS 控制权限）

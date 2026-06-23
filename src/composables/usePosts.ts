@@ -1,17 +1,27 @@
-﻿import { ref } from "vue"
+import { ref } from "vue"
 import { renderMarkdown } from "@/utils/markdown"
+import { supabase } from "@/utils/supabase"
 
-interface Post {
+export interface Post {
+  id?: string
   slug: string
   title: string
   date: string
   summary: string
+  category?: string
   tags: string[]
+  readTime?: number
+  published: boolean
   html: string
   raw: string
+  source: "local" | "supabase"
 }
 
 const posts = ref<Post[]>([])
+const loading = ref(false)
+const loaded = ref(false)
+
+/* ── Local Markdown helpers ── */
 
 function resolveRaw(raw: unknown): string {
   if (typeof raw === "string") return raw.startsWith("data:") ? decodeDataUrl(raw) : raw
@@ -35,40 +45,11 @@ function decodeDataUrl(url: string): string {
   try {
     const binary = atob(payload)
     const bytes = new Uint8Array(binary.length)
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i)
-    }
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
     return new TextDecoder("utf-8").decode(bytes)
   } catch {
     return payload
   }
-}
-
-export function usePosts() {
-  if (posts.value.length > 0) return { posts }
-
-  const modules = import.meta.glob("/src/content/blog/*.md", { as: "raw", eager: true })
-
-  for (const [path, raw] of Object.entries(modules)) {
-    const slug = (path.split("/").pop() ?? "").replace(/\.md$/, "")
-    const content = resolveRaw(raw)
-
-    const meta = parseFrontmatter(content)
-    const body = content.replace(/^---[\s\S]*?---\n*/, "").trim()
-
-    posts.value.push({
-      slug,
-      title: meta.title ?? slug,
-      date: meta.date ?? "",
-      summary: meta.summary ?? body.slice(0, 120),
-      tags: meta.tags ?? [],
-      html: renderMarkdown(body),
-      raw: content
-    })
-  }
-
-  posts.value.sort((a, b) => (b.date > a.date ? 1 : -1))
-  return { posts }
 }
 
 function parseFrontmatter(raw: string): Record<string, any> {
@@ -87,4 +68,84 @@ function parseFrontmatter(raw: string): Record<string, any> {
     }
   }
   return result
+}
+
+function loadLocalPosts(): Post[] {
+  const modules = import.meta.glob("/src/content/blog/*.md", { as: "raw", eager: true })
+  const result: Post[] = []
+  for (const [path, raw] of Object.entries(modules)) {
+    const slug = (path.split("/").pop() ?? "").replace(/\.md$/, "")
+    const content = resolveRaw(raw)
+    const meta = parseFrontmatter(content)
+    const body = content.replace(/^---[\s\S]*?---\n*/, "").trim()
+    result.push({
+      slug,
+      title: meta.title ?? slug,
+      date: meta.date ?? "",
+      summary: meta.summary ?? body.slice(0, 120),
+      tags: meta.tags ?? [],
+      published: true,
+      html: renderMarkdown(body),
+      raw: content,
+      source: "local",
+    })
+  }
+  return result
+}
+
+/* ── Supabase remote posts ── */
+
+async function fetchRemotePosts(): Promise<Post[]> {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("id, slug, title, summary, category, tags, read_time, published, content, created_at")
+    .eq("published", true)
+    .order("created_at", { ascending: false })
+
+  if (error || !data) return []
+
+  return data.map((row: any) => {
+    const raw: string = row.content ?? ""
+    return {
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      date: row.created_at ? row.created_at.slice(0, 10) : "",
+      summary: row.summary ?? raw.slice(0, 120),
+      category: row.category,
+      tags: row.tags ?? [],
+      readTime: row.read_time,
+      published: row.published,
+      html: renderMarkdown(raw),
+      raw,
+      source: "supabase" as const,
+    }
+  })
+}
+
+/* ── Merge: Supabase overrides local on same slug ── */
+
+function mergePosts(local: Post[], remote: Post[]): Post[] {
+  const map = new Map<string, Post>()
+  for (const p of local) map.set(p.slug, p)
+  for (const p of remote) map.set(p.slug, p) // supabase wins
+  return [...map.values()].sort((a, b) => (b.date > a.date ? 1 : -1))
+}
+
+/* ── Public API ── */
+
+export function usePosts() {
+  async function loadPosts() {
+    if (loaded.value) return
+    loading.value = true
+
+    const local = loadLocalPosts()
+    const remote = await fetchRemotePosts()
+    posts.value = mergePosts(local, remote)
+
+    loading.value = false
+    loaded.value = true
+  }
+
+  return { posts, loading, loaded, loadPosts }
 }

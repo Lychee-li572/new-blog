@@ -16,7 +16,11 @@
         </h2>
       </ScrollReveal>
 
+      <div v-if="loading" class="text-center py-10" style="color: var(--text-secondary)">
+        加载中...
+      </div>
       <div
+        v-else
         class="grid gap-5"
         style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))"
       >
@@ -33,13 +37,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, onMounted } from "vue"
 import { usePosts } from "@/composables/usePosts"
 import HeroSection from "@/components/HeroSection.vue"
 import BlogCard from "@/components/BlogCard.vue"
 import ScrollReveal from "@/components/ScrollReveal.vue"
 
-const { posts } = usePosts()
+const { posts, loading, loadPosts } = usePosts()
+onMounted(() => loadPosts())
 
 // 跳过最新一篇（已在 HeroSection 精选卡中展示），展示后续文章
 const displayPosts = computed(() => posts.value.slice(1, 7))
