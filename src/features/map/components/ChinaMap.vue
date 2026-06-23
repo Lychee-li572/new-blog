@@ -9,7 +9,7 @@ import * as echarts from "echarts/core"
 import { GeoComponent } from "echarts/components"
 import { EffectScatterChart } from "echarts/charts"
 import { CanvasRenderer } from "echarts/renderers"
-import { cities, getVisitedProvinces } from "@/data/cities"
+import { cities, getVisitedProvinces } from "@/features/map/data/cities"
 import { useTheme } from "@/composables/useTheme"
 
 echarts.use([GeoComponent, EffectScatterChart, CanvasRenderer])

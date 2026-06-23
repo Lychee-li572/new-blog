@@ -91,8 +91,8 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { usePosts } from "@/composables/usePosts"
-import { cities } from "@/data/cities"
-import photos from "@/data/photos.json"
+import { cities } from "@/features/map/data/cities"
+import photos from "@/features/map/data/photos.json"
 import FeaturedCard from "@/components/FeaturedCard.vue"
 
 const { posts, loading } = usePosts()

@@ -1,4 +1,4 @@
-import photosData from "@/data/photos.json"
+import photosData from "@/features/map/data/photos.json"
 
 export interface City {
   id: string

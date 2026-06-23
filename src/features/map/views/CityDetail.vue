@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-[1100px] mx-auto px-6 py-16">
     <router-link
-      to="/"
+      to="/map"
       class="inline-block mb-6 text-sm no-underline transition-colors"
       style="font-family: var(--font-sans); color: var(--accent-primary)"
     >
@@ -36,7 +36,7 @@
 import { ref, computed } from "vue"
 import { useRoute } from "vue-router"
 import { getImageUrl } from "@/utils/image"
-import { useCity } from "@/composables/useCity"
+import { useCity } from "@/features/map/composables/useCity"
 import { useTheme } from "@/composables/useTheme"
 import PhotoWall from "@/components/PhotoWall.vue"
 import MarkdownRenderer from "@/components/MarkdownRenderer.vue"

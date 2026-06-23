@@ -1,8 +1,8 @@
 import { ref, watchEffect } from "vue"
-import { getCityById } from "@/data/cities"
+import { getCityById } from "@/features/map/data/cities"
 import { renderMarkdown } from "@/utils/markdown"
 
-const cityModules = import.meta.glob("/src/content/cities/*.md", { as: "raw", eager: true })
+const cityModules = import.meta.glob("/src/features/map/content/*.md", { as: "raw", eager: true })
 
 function resolveRaw(raw: unknown): string {
   if (typeof raw === "string") return raw.startsWith("data:") ? decodeDataUrl(raw) : raw

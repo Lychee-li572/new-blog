@@ -13,7 +13,7 @@ config()
 const GH_USER = "Lychee-li572"
 const GH_REPO = "blog-img"
 const GH_BRANCH = "main"
-const OUTPUT = resolve(__dirname, "src/data/photos.json")
+const OUTPUT = resolve(__dirname, "src/features/map/data/photos.json")
 
 const IMAGE_EXTS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg", ".bmp"]
 
@@ -24,7 +24,7 @@ function isImage(name: string) {
 
 /** 从 cities.ts 源码中提取城市名称列表 */
 function parseCityNames(): string[] {
-  const src = readFileSync(resolve(__dirname, "src/data/cities.ts"), "utf-8")
+  const src = readFileSync(resolve(__dirname, "src/features/map/data/cities.ts"), "utf-8")
   const names: string[] = []
   const re = /name:\s*"([^"]+)"/g
   let m: RegExpExecArray | null
@@ -100,9 +100,9 @@ function photosPlugin(): Plugin {
     configureServer(s) {
       server = s
       generate()
-      s.watcher.add(resolve(__dirname, "src/data/cities.ts"))
+      s.watcher.add(resolve(__dirname, "src/features/map/data/cities.ts"))
       s.watcher.on("change", (path) => {
-        if (path === resolve(__dirname, "src/data/cities.ts")) {
+        if (path === resolve(__dirname, "src/features/map/data/cities.ts")) {
           ran = false
           generate()
         }

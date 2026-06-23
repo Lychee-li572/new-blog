@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import ChinaMap from "@/components/ChinaMap.vue"
+import ChinaMap from "@/features/map/components/ChinaMap.vue"
 </script>
