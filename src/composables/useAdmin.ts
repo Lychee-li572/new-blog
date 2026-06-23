@@ -2,43 +2,50 @@ import { ref, computed } from "vue"
 import { supabase } from "@/utils/supabase"
 
 const isAuthenticated = ref(false)
-const authToken = ref<string | null>(null)
 
 export function useAdmin() {
   async function login(email: string, password: string): Promise<boolean> {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error || !data.session) return false
-
-    authToken.value = data.session.access_token
     isAuthenticated.value = true
-    localStorage.setItem("admin_token", data.session.access_token)
     return true
   }
 
   async function logout() {
     await supabase.auth.signOut()
-    authToken.value = null
     isAuthenticated.value = false
-    localStorage.removeItem("admin_token")
   }
 
   function restoreSession() {
-    const saved = localStorage.getItem("admin_token")
-    if (saved) {
-      authToken.value = saved
-      isAuthenticated.value = true
-    }
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) isAuthenticated.value = true
+    })
   }
 
-  async function apiFetch(path: string, options: RequestInit = {}) {
-    return fetch(path, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken.value}`,
-        ...options.headers,
-      },
-    })
+  // 直接查询 Supabase（用 anon key + RLS 控制权限）
+  async function fetchPosts(publishedOnly = false) {
+    let query = supabase.from("posts").select("id, slug, title, summary, category, tags, read_time, published, created_at, updated_at").order("created_at", { ascending: false })
+    if (publishedOnly) query = query.eq("published", true)
+    const { data, error } = await query
+    if (error) throw error
+    return data
+  }
+
+  async function createPost(post: any) {
+    const { data, error } = await supabase.from("posts").insert(post).select().single()
+    if (error) throw error
+    return data
+  }
+
+  async function updatePost(id: string, updates: any) {
+    const { data, error } = await supabase.from("posts").update(updates).eq("id", id).select().single()
+    if (error) throw error
+    return data
+  }
+
+  async function deletePost(id: string) {
+    const { error } = await supabase.from("posts").delete().eq("id", id)
+    if (error) throw error
   }
 
   return {
@@ -46,6 +53,9 @@ export function useAdmin() {
     login,
     logout,
     restoreSession,
-    apiFetch,
+    fetchPosts,
+    createPost,
+    updatePost,
+    deletePost,
   }
 }
