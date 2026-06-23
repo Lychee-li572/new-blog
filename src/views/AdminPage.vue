@@ -7,7 +7,7 @@
         <button @click="handleLogout" class="px-4 py-2 rounded-lg text-sm cursor-pointer" style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-secondary)">退出登录</button>
       </div>
       <AdminPostEditor v-if="editing" :post="editing" @saved="onSaved" @cancel="editing = null" />
-      <AdminPostList v-else :posts="posts" :loading="loading" @create="editing = emptyPost" @edit="editing = $event" @delete="handleDelete" />
+      <AdminPostList v-else :posts="posts" :loading="loading" @create="editing = emptyPost" @edit="handleEdit" @delete="handleDelete" />
     </div>
   </div>
 </template>
@@ -19,7 +19,7 @@ import AdminLogin from "@/views/AdminLogin.vue"
 import AdminPostList from "@/components/AdminPostList.vue"
 import AdminPostEditor from "@/components/AdminPostEditor.vue"
 
-const { isAuthenticated, logout, restoreSession, fetchPosts, deletePost } = useAdmin()
+const { isAuthenticated, logout, restoreSession, fetchPosts, fetchPost, deletePost } = useAdmin()
 
 const posts = ref<any[]>([])
 const loading = ref(false)
@@ -37,6 +37,15 @@ async function loadPosts() {
   loading.value = true
   try { posts.value = await fetchPosts() } catch {}
   loading.value = false
+}
+
+async function handleEdit(post: any) {
+  try {
+    const full = await fetchPost(post.id)
+    editing.value = full
+  } catch {
+    editing.value = post
+  }
 }
 
 async function onSaved() {

@@ -21,11 +21,18 @@ export function useAdmin() {
     if (data.session) isAuthenticated.value = true
   }
 
-  // 直接查询 Supabase（用 anon key + RLS 控制权限）
+  // 列表查询（不含 content，轻量）
   async function fetchPosts(publishedOnly = false) {
     let query = supabase.from("posts").select("id, slug, title, summary, category, tags, read_time, published, created_at, updated_at").order("created_at", { ascending: false })
     if (publishedOnly) query = query.eq("published", true)
     const { data, error } = await query
+    if (error) throw error
+    return data
+  }
+
+  // 单篇详情（含 content，用于编辑回显）
+  async function fetchPost(id: string) {
+    const { data, error } = await supabase.from("posts").select("*").eq("id", id).single()
     if (error) throw error
     return data
   }
@@ -53,6 +60,7 @@ export function useAdmin() {
     logout,
     restoreSession,
     fetchPosts,
+    fetchPost,
     createPost,
     updatePost,
     deletePost,
