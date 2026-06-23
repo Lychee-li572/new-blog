@@ -12,6 +12,7 @@ const routes = [
   { path: "/games", name: "games", component: () => import("@/views/GamesPage.vue") },
   { path: "/toolbox", name: "toolbox", component: () => import("@/views/ToolboxPage.vue") },
   { path: "/admin", name: "admin", component: () => import("@/views/AdminPage.vue") },
+  { path: "/admin/login", name: "admin-login", component: () => import("@/views/AdminLogin.vue") },
 ]
 
 export default createRouter({ history: createWebHistory(), routes })
