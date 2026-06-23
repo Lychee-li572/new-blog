@@ -1,23 +1,33 @@
 <template>
-  <div class="max-w-6xl mx-auto px-4 py-12">
-    <router-link to="/" class="text-amber-700 hover:underline text-sm mb-4 inline-block">← 返回地图</router-link>
-    <h1 class="text-3xl font-bold text-amber-900 mb-2">{{ city?.name }}</h1>
-    <p class="text-stone-500 mb-8">{{ city?.province }}</p>
+  <div class="max-w-[1100px] mx-auto px-6 py-16">
+    <router-link
+      to="/"
+      class="inline-block mb-6 text-sm no-underline transition-colors"
+      style="font-family: var(--font-sans); color: var(--accent-primary)"
+    >
+      &larr; 返回地图
+    </router-link>
+
+    <h1
+      class="text-3xl font-bold mb-1"
+      style="font-family: var(--font-heading); color: var(--text-primary)"
+    >
+      {{ city?.name }}
+    </h1>
+    <p class="mb-10" style="font-family: var(--font-sans); color: var(--text-secondary)">
+      {{ city?.province }}
+    </p>
+
     <div class="flex flex-col lg:flex-row gap-8">
-      <div class="lg:w-1/2">
+      <div class="lg:w-1/2 card">
         <PhotoWall :photos="photos" @preview="openPreview" />
       </div>
-      <div class="lg:w-1/2">
+      <div class="lg:w-1/2 card">
         <MarkdownRenderer :html="travelHtml" />
       </div>
     </div>
-    <Lightbox :visible="showLightbox" :src="lightboxSrc" @close="showLightbox = false" />
 
-    <!--
-      BlogComment 集成
-      - mapping="pathname" 自动以当前 URL 路径（如 /city/nanning）映射 Discussion
-      - theme 与全局 useTheme() 联动，主题切换时 Giscus 自动跟随
-    -->
+    <Lightbox :visible="showLightbox" :src="lightboxSrc" @close="showLightbox = false" />
     <BlogComment :theme="theme" />
   </div>
 </template>
@@ -35,11 +45,9 @@ import BlogComment from "@/components/BlogComment.vue"
 
 const route = useRoute()
 const { city, travelHtml } = useCity(() => route.params.cityId as string)
-
-// 全局主题状态，传入 BlogComment 实现动态联动
 const { theme } = useTheme()
 
-const photos = computed(() => city.value?.photos.map(p => getImageUrl(p)) ?? [])
+const photos = computed(() => city.value?.photos.map((p) => getImageUrl(p)) ?? [])
 
 const showLightbox = ref(false)
 const lightboxSrc = ref("")

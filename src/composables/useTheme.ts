@@ -2,12 +2,12 @@ import { ref, watchEffect } from "vue"
 
 type Theme = "light" | "dark"
 
-// 单例状态，跨组件共享
+// 单例状态，跨组件共享；默认亮色模式
 const theme = ref<Theme>(
   (localStorage.getItem("blog-theme") as Theme) ?? "light"
 )
 
-// 将主题 class 应用到 <html>，联动 Tailwind dark: 前缀
+// 暗色模式通过 .dark class 切换 CSS 变量
 watchEffect(() => {
   document.documentElement.classList.toggle("dark", theme.value === "dark")
   localStorage.setItem("blog-theme", theme.value)
@@ -15,9 +15,8 @@ watchEffect(() => {
 
 /**
  * 全局明/暗主题 composable
- * - 读取/写入 localStorage 持久化
- * - 自动切换 <html> 上的 dark class
- * - 返回响应式 theme 和 toggle 方法
+ * - 默认亮色（温暖书卷风）
+ * - 暗色模式通过 .dark class 切换 CSS 变量
  */
 export function useTheme() {
   function toggle() {

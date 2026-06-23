@@ -1,12 +1,12 @@
-﻿<template>
+<template>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
     <div
       v-for="(url, i) in photos"
       :key="i"
-      class="overflow-hidden rounded-lg shadow-md cursor-pointer bg-stone-200 group"
+      class="overflow-hidden cursor-pointer group transition-all"
+      style="border-radius: var(--radius-md)"
       @click="$emit('preview', url)"
     >
-      <!-- aspect-ratio 容器防止 CLS 布局抖动 -->
       <div class="relative w-full" style="aspect-ratio: 4/3">
         <img
           :src="url"

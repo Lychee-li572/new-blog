@@ -1,2 +1,8 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+/* Design system */
+@import "./styles/tokens.css";
+@import "./styles/base.css";
+@import "./styles/card.css";
+@import "./styles/animations.css";
