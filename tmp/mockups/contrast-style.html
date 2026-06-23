@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方案C - 混搭对比风</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0b0b14;
+    --bg-surface: rgba(14, 14, 28, 0.6);
+    --glass: rgba(255, 255, 255, 0.035);
+    --glass-thick: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-hover: rgba(255, 255, 255, 0.15);
+    --neon-cyan: #00e5ff;
+    --neon-magenta: #ff2d78;
+    --neon-amber: #ffb300;
+    --text-primary: #f5f3ff;
+    --text-body: #c8c4d8;
+    --text-secondary: #7e7a92;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Noto Sans SC', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 背景微点阵 */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none; z-index: 0;
+  }
+  /* 大面积柔光 */
+  .ambient-1 {
+    position: fixed; top: -20%; right: -10%;
+    width: 60vw; height: 60vh;
+    background: radial-gradient(ellipse, rgba(0,229,255,0.06) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .ambient-2 {
+    position: fixed; bottom: -20%; left: -10%;
+    width: 50vw; height: 50vh;
+    background: radial-gradient(ellipse, rgba(255,45,120,0.05) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* 导航 */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(30px) saturate(1.6);
+    -webkit-backdrop-filter: blur(30px) saturate(1.6);
+    background: rgba(11, 11, 20, 0.5);
+    border-bottom: 1px solid var(--glass-border);
+  }
+  nav .inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 24px;
+    height: 64px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 22px;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .logo .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--neon-magenta);
+    border-radius: 50%;
+    margin-left: 2px;
+    box-shadow: 0 0 12px rgba(255,45,120,0.5);
+    vertical-align: baseline;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 400;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+
+  /* Hero */
+  .hero {
+    padding: 100px 0 60px;
+    max-width: 700px;
+  }
+  .hero .overline {
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 600;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero .overline::before {
+    content: '';
+    width: 32px; height: 2px;
+    background: var(--neon-cyan);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 56px; font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .subtitle {
+    font-size: 17px; color: var(--text-body);
+    line-height: 1.8; font-weight: 300;
+  }
+
+  /* 标签 */
+  .tag-row {
+    display: flex; gap: 10px;
+    margin-top: 28px; flex-wrap: wrap;
+  }
+  .tag {
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 400;
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: blur(8px);
+    color: var(--text-secondary);
+    transition: all 0.3s;
+  }
+  .tag:hover {
+    border-color: var(--glass-border-hover);
+    background: var(--glass-thick);
+    color: var(--text-primary);
+  }
+
+  /* 区域标题 */
+  .section-label {
+    font-family: var(--font-display);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label .num {
+    font-size: 36px; font-weight: 700;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+
+  /* 卡片 */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px; margin-bottom: 60px;
+  }
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .card:hover {
+    border-color: var(--glass-border-hover);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    transform: translateY(-4px);
+  }
+  .card .date {
+    font-family: var(--font-display);
+    font-size: 12px; font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+  .card h3 {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px; line-height: 1.4;
+    letter-spacing: -0.3px;
+  }
+  .card p {
+    font-size: 14px; color: var(--text-body);
+    line-height: 1.8; font-weight: 300;
+  }
+  .card .tags { display: flex; gap: 8px; margin-top: 16px; }
+  .card .tags span {
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 400;
+    padding: 3px 12px;
+    border-radius: 100px;
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--neon-cyan);
+    opacity: 0.8;
+  }
+
+  /* 特色大卡 */
+  .featured-card {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .featured-card .card-visual {
+    background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(255,45,120,0.08));
+    display: flex; align-items: center; justify-content: center;
+    min-height: 200px;
+    position: relative;
+  }
+  .featured-card .card-visual .geo-shape {
+    width: 100px; height: 100px;
+    border: 2px solid rgba(0,229,255,0.3);
+    border-radius: 20px;
+    transform: rotate(45deg);
+    box-shadow: 0 0 40px rgba(0,229,255,0.1);
+  }
+  .featured-card .card-content {
+    padding: 36px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .featured-card .card-content .badge {
+    font-family: var(--font-display);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--neon-magenta);
+    margin-bottom: 12px;
+  }
+
+  footer {
+    text-align: center; padding: 40px 0;
+    font-family: var(--font-body);
+    font-size: 13px; color: var(--text-secondary);
+    border-top: 1px solid var(--glass-border);
+  }
+  footer strong {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="ambient-1"></div>
+<div class="ambient-2"></div>
+
+<nav>
+  <div class="inner">
+    <div class="logo">少吃熏鱼<span class="dot"></span></div>
+    <div class="nav-links">
+      <a href="#">首页</a>
+      <a href="#">博客</a>
+      <a href="#">工具箱</a>
+      <a href="#">足迹</a>
+      <a href="#">关于</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <section class="hero">
+    <div class="overline">Digital Garden</div>
+    <h1>在代码的<br><em>缝隙</em>里寻找意义</h1>
+    <p class="subtitle">个人技术博客 & 数字花园，记录代码、旅行和那些值得被记住的想法。</p>
+    <div class="tag-row">
+      <span class="tag">Vue.js</span>
+      <span class="tag">TypeScript</span>
+      <span class="tag">系统设计</span>
+      <span class="tag">旅行</span>
+    </div>
+  </section>
+
+  <div class="section-label">
+    <span class="num">01</span>
+    最近文章
+  </div>
+
+  <div class="card-grid">
+    <div class="card featured-card">
+      <div class="card-visual">
+        <div class="geo-shape"></div>
+      </div>
+      <div class="card-content">
+        <div class="badge">精选</div>
+        <div class="date">June 22, 2026</div>
+        <h3>从 React 到 Vue：一次迟到的迁徙</h3>
+        <p>为什么我最终选择了 Vue 3 + TypeScript 重写整个博客，以及这个过程中的取舍。</p>
+        <div class="tags"><span>Vue</span><span>架构</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="date">June 15, 2026</div>
+      <h3>Cloudflare Workers 边缘计算实战</h3>
+      <p>用 Workers + KV 搭建零成本后端，从 API 设计到部署的完整记录。</p>
+      <div class="tags"><span>Cloudflare</span><span>后端</span></div>
+    </div>
+    <div class="card">
+      <div class="date">May 28, 2026</div>
+      <h3>GPT-5 的推理能力到底强在哪</h3>
+      <p>深入测试 GPT-5 在复杂推理任务上的表现，和前代模型的对比分析。</p>
+      <div class="tags"><span>AI</span><span>GPT-5</span></div>
+    </div>
+    <div class="card">
+      <div class="date">May 19, 2026</div>
+      <h3>宁波三日：海风与老街</h3>
+      <p>天一阁的安静、老外滩的夜色、象山渔港的清晨，一座被低估的沿海城市。</p>
+      <div class="tags"><span>旅行</span><span>宁波</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>少吃熏鱼 &copy; 2026 &mdash; powered by <strong>Vue</strong> + <strong>Cloudflare</strong></p>
+</footer>
+</body>
+</html>
