@@ -8,7 +8,6 @@
     <div
       class="json-parser-workspace mx-auto max-w-[1600px]"
       :style="{ '--left': leftWidth + '%' }"
-      @pointerdown="onDividerPointerDown"
     >
       <div class="json-parser-left min-w-[220px]">
         <JsonInputPanel v-model="rawInput">
@@ -27,7 +26,7 @@
         </JsonInputPanel>
       </div>
 
-      <div class="json-parser-divider" data-testid="divider" />
+      <div class="json-parser-divider" data-testid="divider" @pointerdown="onDividerPointerDown" />
 
       <div class="json-parser-right min-w-[220px]">
         <JsonResultPanel :active-view="activeView" @update:active-view="activeView = $event">
@@ -95,7 +94,8 @@ function clampWidth(value: number) {
 }
 
 function onDividerPointerDown(event: PointerEvent) {
-  const workspace = (event.currentTarget as HTMLElement).closest('.json-parser-workspace')
+  const divider = event.currentTarget as HTMLElement
+  const workspace = divider.closest('.json-parser-workspace')
   if (!workspace) {
     return
   }
@@ -132,7 +132,18 @@ function clear() {
 }
 
 async function copyResult() {
-  await navigator.clipboard.writeText(formatted.value || rawInput.value)
+  const text = formatted.value || rawInput.value
+  if (!text) {
+    return
+  }
+
+  try {
+    await navigator.clipboard.writeText(text)
+    window.alert('已复制到剪贴板')
+  } catch (error) {
+    console.error('copy failed', error)
+    window.alert('复制失败，请手动选择内容复制')
+  }
 }
 
 function downloadResult() {
