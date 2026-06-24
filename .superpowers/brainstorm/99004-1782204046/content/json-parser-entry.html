@@ -1,0 +1,58 @@
+<h2>JSON 解析器应该放在哪里？</h2>
+<p class="subtitle">先确认入口和页面归属，再细化交互与需求。</p>
+
+<div class="options">
+  <div class="option" data-choice="toolbox-sub" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>工具箱子页面（推荐）</h3>
+      <p>放在 <code>/toolbox/json-parser</code>，保留“工具箱”作为工具集合入口，后续可继续扩展其他小工具。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="top-level" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>独立顶级页面</h3>
+      <p>直接用 <code>/json-parser</code>，导航上单独出现。更直给，但会和工具箱定位重叠。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="toolbox-inline" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>工具箱内嵌面板</h3>
+      <p>先做工具列表，点击“JSON 解析器”后在同一个页面内展开工具面板，不跳新页面。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:12px">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">示意：方案 A</div>
+      <div class="mockup-body">
+        <div class="mock-nav">少吃熏鱼 | 首页 | 地图 | 游戏 | 工具箱 | 博客</div>
+        <div class="mock-content" style="margin-top:8px">
+          <div class="label">工具箱</div>
+          <h3>JSON 解析器</h3>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <div class="mock-input" style="flex:1">输入 JSON...</div>
+            <div class="mock-button">解析</div>
+          </div>
+          <div class="placeholder" style="margin-top:12px">格式化结果区</div>
+        </div>
+      </div>
+    </div>
+    <div class="mockup">
+      <div class="mockup-header">示意：方案 B/C</div>
+      <div class="mockup-body">
+        <div class="mock-nav">少吃熏鱼 | 首页 | 地图 | 游戏 | JSON 解析器 | 博客</div>
+        <div class="mock-content" style="margin-top:8px">
+          <h3>JSON 解析器</h3>
+          <div class="placeholder">完整独立工具页 / 内嵌工具面板</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,21 +6,21 @@
         class="text-sm mb-4"
         style="font-family: var(--font-sans); color: var(--accent-primary)"
       >
-        ✨ 下午好，来记一笔
+        ✨ 欢迎来到少吃熏鱼
       </p>
 
-      <h1
-        class="text-5xl lg:text-6xl leading-none mb-5"
-        style="font-family: var(--font-brand); color: var(--text-primary)"
+      <h2
+        class="text-5xl lg:text-6xl leading-none mb-5 width:30px"
+        style="font-family: var(--font-brand); color: var(--text-primary); font-weight: 500"
       >
         少吃熏鱼
-      </h1>
+      </h2>
 
       <p
         class="text-base leading-relaxed mb-6 max-w-md"
         style="font-family: var(--font-serif); color: var(--text-body)"
       >
-        一个慢更的博客。前端、AI、自己折腾的小项目都丢在这里，主要写给半年后的自己看。
+        一个随缘更的博客。目前还没想到写什么，随便写写吧，网站用vibecoding出来的，拒绝手搓。
       </p>
 
       <!-- 标签胶囊 -->
@@ -31,7 +31,8 @@
       <!-- CTA 按钮 -->
       <div class="flex gap-3 mb-10">
         <router-link
-          to="/blog"
+          v-if="latestPost"
+          :to="`/blog/${latestPost.slug}`"
           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all no-underline"
           style="
             font-family: var(--font-sans);
@@ -99,7 +100,7 @@ const { posts, loading } = usePosts()
 
 const latestPost = computed(() => posts.value[0] ?? null)
 
-const pills = ["慢更", "凭印象写", "偶尔废话"]
+const pills = ["慢更", "随缘写", "偶尔废话"]
 
 const uniqueTags = computed(() => {
   const tags = new Set(posts.value.flatMap((p) => p.tags))

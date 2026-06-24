@@ -12,7 +12,7 @@
           class="text-2xl font-bold mb-8"
           style="font-family: var(--font-heading); color: var(--text-primary)"
         >
-          🔥 几篇可以先看的
+          🔥 最新几篇博客
         </h2>
       </ScrollReveal>
 

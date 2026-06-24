@@ -1,0 +1,79 @@
+<h2>JSON 解析器要做哪些核心能力？</h2>
+<p class="subtitle">你已经选了：工具箱子页面 + 左右分栏布局。下一步定功能边界，避免一开始做太重。</p>
+
+<div class="cards">
+  <div class="card" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">最小可用版</div>
+        <div class="mockup-body">
+          <div style="display:flex;gap:8px">
+            <div class="mock-sidebar" style="flex:1">输入 JSON</div>
+            <div class="mock-content" style="flex:1">格式化结果</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+            <div class="mock-button">格式化</div>
+            <div class="mock-button">复制</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 轻量版</h3>
+      <p>只做格式化、压缩、复制。开发快，和你“工具箱里放一个顺手小工具”的预期一致。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="balanced" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">实用平衡版</div>
+        <div class="mockup-body">
+          <div style="display:flex;gap:8px">
+            <div class="mock-sidebar" style="flex:1">输入 JSON</div>
+            <div class="mock-content" style="flex:1">树形查看 + 错误定位</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+            <div class="mock-button">格式化</div>
+            <div class="mock-button">压缩</div>
+            <div class="mock-button">复制</div>
+            <div class="mock-button">下载</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 实用版（推荐）</h3>
+      <p>格式化 + 压缩 + 错误提示 + 树形折叠 + 复制/下载。满足大多数“粘进去就看懂”的场景，复杂度也可控。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="pro" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">专业增强版</div>
+        <div class="mockup-body">
+          <div style="display:flex;gap:8px">
+            <div class="mock-sidebar" style="flex:1">输入 JSON + 搜索</div>
+            <div class="mock-content" style="flex:1">路径 / 转换 / 对比</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+            <div class="mock-button">格式化</div>
+            <div class="mock-button">JSONPath</div>
+            <div class="mock-button">转 CSV</div>
+            <div class="mock-button">Diff</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 专业版</h3>
+      <p>再叠加 JSONPath 查询、键值搜索、转 CSV/Markdown、两个 JSON 对比。很完整，但明显更重，后面迭代更合适。</p>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top:12px">
+  <div class="pros"><h4>建议</h4><ul><li>先做 B，后续按需补 C 的子能力</li><li>保持纯前端，用户数据不上传</li></ul></div>
+  <div class="cons"><h4>风险</h4><ul><li>错误定位和树形结构需要一点交互设计</li><li>超大 JSON 要考虑性能和卡顿</li></ul></div>
+</div>

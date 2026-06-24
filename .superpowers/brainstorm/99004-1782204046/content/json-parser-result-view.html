@@ -1,0 +1,68 @@
+<h2>右侧结果区用哪种“看得懂”的方式？</h2>
+<p class="subtitle">你已经选了：工具箱子页面 + 左右分栏 + 实用版能力。现在定最关键的“阅读体验”。</p>
+
+<div class="options">
+  <div class="option" data-choice="raw" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>格式化原始文本</h3>
+      <p>像 json.cn 那样，右侧重排后的 JSON 文本，带行号和语法高亮。最接近你的原话：“一眼看懂的 JSON”。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="tree" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>树形结构视图</h3>
+      <p>对象/数组可折叠展开，键值一目了然。适合层级复杂的数据，但和“原样 JSON”会有一点差别。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="dual" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>双视图切换（推荐）</h3>
+      <p>默认显示格式化原始文本，旁边提供“结构视图”按钮切换到树形。两者都保留，体验最稳。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:12px">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">方案 A：格式化原始文本</div>
+      <div class="mockup-body">
+        <div style="display:flex;gap:8px">
+          <div class="mock-sidebar" style="flex:1">输入 JSON</div>
+          <div class="mock-content" style="flex:1">
+            <div class="label">解析结果</div>
+            <div class="placeholder">带行号、缩进、语法高亮的 JSON 文本</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">方案 C：双视图</div>
+      <div class="mockup-body">
+        <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div class="label">结果视图</div>
+          <div style="display:flex;gap:6px">
+            <div class="mock-button">文本</div>
+            <div class="mock-button">结构</div>
+            <div class="mock-button">复制</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div class="mock-sidebar" style="flex:1">输入 JSON</div>
+          <div class="mock-content" style="flex:1">
+            <div class="placeholder">默认：格式化文本</div>
+            <div class="placeholder" style="margin-top:8px">切换后：可折叠树形结构</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:10px">如果你心里已经有“像 json.cn”这一点，我建议直接选 A 或 C。</p>

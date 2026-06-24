@@ -1,0 +1,66 @@
+<h2>JSON 解析器要长什么样？</h2>
+<p class="subtitle">你前面已经选了：工具箱子页面 + 左右分栏 + 实用版 + 双视图切换 + 方案 2 实现路径。现在定视觉风格。</p>
+
+<div class="options">
+  <div class="option" data-choice="warm" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>延续博客风格（推荐）</h3>
+      <p>奶油底、amber 强调、柔和卡片边框，和你现有站点气质一致。工具会像博客的一部分，而不是外来页面。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="neutral" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>中性工具风</h3>
+      <p>降低暖色存在感，偏灰白面板和更克制的强调色。更像独立小工具，但会和主站风格拉开一点距离。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="dev" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>开发终端风</h3>
+      <p>深色面板、代码感更强，容易显得“专业”。但和你这个温暖书卷风博客会有明显反差。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:12px">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">A：延续博客风格</div>
+      <div class="mockup-body">
+        <div class="mock-nav">少吃熏鱼 | 工具箱 | JSON 解析器</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div class="mock-sidebar" style="flex:1;border-radius:12px;background:#fff8ee;border:1px solid #f5d19a">输入区</div>
+          <div class="mock-content" style="flex:1;border-radius:12px;background:#fffdf8;border:1px solid #f5d19a">结果区</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+          <div class="mock-button">文本</div>
+          <div class="mock-button">结构</div>
+          <div class="mock-button">复制</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">C：开发终端风</div>
+      <div class="mockup-body">
+        <div class="mock-nav">少吃熏鱼 | 工具箱 | JSON 解析器</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div class="mock-sidebar" style="flex:1;border-radius:10px;background:#111827;color:#e5e7eb;border:1px solid #1f2937">输入区</div>
+          <div class="mock-content" style="flex:1;border-radius:10px;background:#111827;color:#e5e7eb;border:1px solid #1f2937">结果区</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+          <div class="mock-button">文本</div>
+          <div class="mock-button">结构</div>
+          <div class="mock-button">复制</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:10px">选完这个，我就可以直接整理最终需求文档了。</p>

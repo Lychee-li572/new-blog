@@ -7,6 +7,7 @@ export interface Post {
   slug: string
   title: string
   date: string
+  updated_at?: string
   summary: string
   category?: string
   tags: string[]
@@ -98,9 +99,9 @@ function loadLocalPosts(): Post[] {
 async function fetchRemotePosts(): Promise<Post[]> {
   const { data, error } = await supabase
     .from("posts")
-    .select("id, slug, title, summary, category, tags, read_time, published, content, created_at")
+    .select("id, slug, title, summary, category, tags, read_time, published, content, created_at, updated_at")
     .eq("published", true)
-    .order("created_at", { ascending: false })
+    .order("updated_at", { ascending: true, nullsFirst: false })
 
   if (error || !data) return []
 
@@ -111,6 +112,7 @@ async function fetchRemotePosts(): Promise<Post[]> {
       slug: row.slug,
       title: row.title,
       date: row.created_at ? row.created_at.slice(0, 10) : "",
+      updated_at: row.updated_at ? row.updated_at.slice(0, 10) : undefined,
       summary: row.summary ?? raw.slice(0, 120),
       category: row.category,
       tags: row.tags ?? [],
@@ -129,7 +131,11 @@ function mergePosts(local: Post[], remote: Post[]): Post[] {
   const map = new Map<string, Post>()
   for (const p of local) map.set(p.slug, p)
   for (const p of remote) map.set(p.slug, p) // supabase wins
-  return [...map.values()].sort((a, b) => (b.date > a.date ? 1 : -1))
+  return [...map.values()].sort((a, b) => {
+    const dateA = a.updated_at || a.date
+    const dateB = b.updated_at || b.date
+    return dateB > dateA ? 1 : -1
+  })
 }
 
 /* ── Public API ── */

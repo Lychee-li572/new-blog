@@ -1,0 +1,58 @@
+<h2>JSON 解析器的页面布局怎么定？</h2>
+<p class="subtitle">你已经选了“工具箱子页面”。下一步先定主界面骨架，再继续细化功能范围。</p>
+
+<div class="options">
+  <div class="option" data-choice="stacked" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>单列上下布局（推荐）</h3>
+      <p>上面是输入区和操作按钮，下面是结果区。结构简单，移动端体验也更好，和你这个博客工具页的气质更统一。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="split" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>左右分栏布局</h3>
+      <p>左侧输入，右侧实时显示格式化/树形结果。更像专业开发工具，宽屏体验好，但小屏需要额外适配。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:12px">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">方案 A：单列上下</div>
+      <div class="mockup-body">
+        <div class="mock-nav">少吃熏鱼 | 工具箱 | JSON 解析器</div>
+        <div class="mock-content" style="margin-top:8px">
+          <h3>JSON 解析器</h3>
+          <div class="placeholder">输入 JSON 文本</div>
+          <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+            <div class="mock-button">格式化</div>
+            <div class="mock-button">压缩</div>
+            <div class="mock-button">复制</div>
+          </div>
+          <div class="placeholder" style="margin-top:12px">解析结果 / 错误提示</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">方案 B：左右分栏</div>
+      <div class="mockup-body">
+        <div style="display:flex;gap:8px">
+          <div class="mock-sidebar" style="flex:1">输入 JSON</div>
+          <div class="mock-content" style="flex:1">树形 / 格式化结果</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+          <div class="mock-button">格式化</div>
+          <div class="mock-button">压缩</div>
+          <div class="mock-button">复制</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:10px">如果你愿意，也可以直接在这里补充一句：你更偏“轻量工具”还是“开发者专业工具”。</p>

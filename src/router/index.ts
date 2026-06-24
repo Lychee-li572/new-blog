@@ -10,6 +10,7 @@ const routes = [
   { path: "/tags", name: "tags", component: () => import("@/views/TagsPage.vue") },
   { path: "/about", name: "about", component: () => import("@/views/AboutPage.vue") },
   { path: "/games", name: "games", component: () => import("@/features/games/views/GamesPage.vue") },
+  { path: "/games/:gameSlug", name: "game-detail", component: () => import("@/features/games/views/GameDetailPage.vue") },
   { path: "/toolbox", name: "toolbox", component: () => import("@/features/toolbox/views/ToolboxPage.vue") },
   { path: "/toolbox/json-parser", name: "json-parser", component: () => import("@/features/toolbox/views/JsonParserPage.vue") },
   { path: "/admin", name: "admin", component: () => import("@/views/AdminPage.vue") },
