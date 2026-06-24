@@ -40,6 +40,7 @@ import { useRoute } from "vue-router"
 
 const GAMES: Record<string, { title: string; src: string }> = {
   "2048": { title: "2048", src: "/games/2048/index.html" },
+  "tetris": { title: "俄罗斯方块", src: "/games/tetris/index.html" },
 }
 
 const route = useRoute()

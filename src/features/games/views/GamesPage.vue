@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { markRaw } from "vue"
-import { Grid2X2 } from "@lucide/vue"
+import { Grid2X2, Blocks } from "@lucide/vue"
 
 interface GameItem {
   slug: string
@@ -63,6 +63,12 @@ const games: GameItem[] = [
     title: "2048",
     description: "滑动合并相同数字，挑战更高分的益智小游戏。",
     icon: markRaw(Grid2X2),
+  },
+  {
+    slug: "tetris",
+    title: "俄罗斯方块",
+    description: "经典方块下落消除，挑战手速与策略的永恒之作。",
+    icon: markRaw(Blocks),
   },
 ]
 </script>
