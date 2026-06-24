@@ -22,7 +22,7 @@
           <JsonTextView :text="formatted" />
         </template>
         <template v-else>
-          <div class="p-4 text-sm" style="color: var(--text-secondary)">结构视图会在后续任务实现。</div>
+          <JsonTreeView :value="parsedValue" />
         </template>
       </JsonResultPanel>
     </div>
@@ -30,14 +30,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import JsonInputPanel from '@/features/toolbox/components/JsonInputPanel.vue'
 import JsonResultPanel from '@/features/toolbox/components/JsonResultPanel.vue'
 import JsonTextView from '@/features/toolbox/components/JsonTextView.vue'
+import JsonTreeView from '@/features/toolbox/components/JsonTreeView.vue'
 import { useJsonParser } from '@/features/toolbox/composables/useJsonParser'
 
 const { rawInput, formatted, refresh } = useJsonParser()
 const activeView = ref<'text' | 'tree'>('text')
+
+const parsedValue = computed(() => {
+  if (!formatted.value) {
+    return null
+  }
+
+  try {
+    return JSON.parse(rawInput.value)
+  } catch {
+    return null
+  }
+})
 
 function clear() {
   rawInput.value = ''
