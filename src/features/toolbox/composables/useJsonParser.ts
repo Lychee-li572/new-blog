@@ -1,10 +1,11 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { formatJson, minifyJson } from '@/features/toolbox/utils/json-format'
 
 export function useJsonParser() {
   const rawInput = ref('')
   const formatted = ref('')
   const error = ref<{ message: string; line?: number; column?: number } | null>(null)
+  let timer: ReturnType<typeof setTimeout> | null = null
 
   function setErrorFromResult(result: { ok: false; message: string; line?: number; column?: number }) {
     error.value = { message: result.message, line: result.line, column: result.column }
@@ -47,6 +48,17 @@ export function useJsonParser() {
     setErrorFromResult(result)
     return ''
   }
+
+  watch(
+    rawInput,
+    () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+      timer = setTimeout(refresh, 280)
+    },
+    { immediate: true }
+  )
 
   return {
     rawInput,
