@@ -1,7 +1,10 @@
-import { render, screen } from '@testing-library/vue'
+import { fireEvent, render, screen, waitFor } from '@testing-library/vue'
 import JsonParserPage from '@/features/toolbox/views/JsonParserPage.vue'
 
-test('renders JSON parser page title', () => {
+test('shows formatted JSON result in text view', async () => {
   render(JsonParserPage)
-  expect(screen.getByRole('heading', { name: /JSON 解析器/i })).toBeTruthy()
+  const textarea = screen.getByLabelText(/输入 JSON/i)
+  await fireEvent.update(textarea, '{"name":"codex"}')
+  await waitFor(() => expect(screen.getByText(/"name"/)).toBeTruthy())
+  expect(screen.getByText('1')).toBeTruthy()
 })
