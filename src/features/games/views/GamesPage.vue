@@ -38,7 +38,13 @@
             <p class="mt-2 text-sm leading-relaxed" style="color: var(--text-body)">
               {{ game.description }}
             </p>
-            <div class="mt-4 text-sm" style="font-family: var(--font-sans); color: var(--accent-primary)">开始游玩</div>
+            <div class="mt-3 text-xs" style="color: var(--text-secondary)">
+              历史最高分：
+              <span style="color: var(--accent-primary); font-weight: 600">
+                {{ highestScores[game.slug] ? highestScores[game.slug].toLocaleString() : "暂无记录" }}
+              </span>
+            </div>
+            <div class="mt-2 text-sm" style="font-family: var(--font-sans); color: var(--accent-primary)">开始游玩</div>
           </div>
         </div>
       </router-link>
@@ -47,8 +53,9 @@
 </template>
 
 <script setup lang="ts">
-import { markRaw } from "vue"
+import { ref, markRaw, onMounted } from "vue"
 import { Grid2X2, Blocks } from "@lucide/vue"
+import { useGameLeaderboard } from "../composables/useGameLeaderboard"
 
 interface GameItem {
   slug: string
@@ -71,5 +78,12 @@ const games: GameItem[] = [
     icon: markRaw(Blocks),
   },
 ]
+
+const highestScores = ref<Record<string, number>>({})
+const { fetchHighestScores } = useGameLeaderboard()
+
+onMounted(async () => {
+  const slugs = games.map((g) => g.slug)
+  highestScores.value = await fetchHighestScores(slugs)
+})
 </script>
-EOF>

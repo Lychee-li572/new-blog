@@ -463,7 +463,12 @@ function lockPiece() {
       if (!shape[r][c]) continue;
       const nr = current.row + r;
       const nc = current.col + c;
-      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+      if (nr < 0) {
+        // Piece locked above the board — game over
+        endGame();
+        return;
+      }
+      if (nr < ROWS && nc >= 0 && nc < COLS) {
         board[nr][nc] = color;
       }
     }
@@ -500,13 +505,18 @@ function spawnPiece() {
   const rotation = 0;
   const shape = SHAPES[type][rotation];
   const col = Math.floor((COLS - shape[0].length) / 2);
-  let row = -1;
-  // If can't place, game over
-  if (!isValid(type, rotation, row, col)) {
-    row = -2; // definitely invalid, will trigger game over
-    if (!isValid(type, rotation, row, col)) {
-      endGame();
-      return;
+  const row = -1;
+  // Check game over: any visible cell (nr >= 0) already occupied?
+  for (let r = 0; r < shape.length; r++) {
+    for (let c = 0; c < shape[r].length; c++) {
+      if (!shape[r][c]) continue;
+      const nr = row + r;
+      const nc = col + c;
+      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && board[nr][nc]) {
+        endGame();
+        return;
+      }
+      // If any cell is completely off the top but the piece can't move down at all, also game over
     }
   }
   current = { type, rotation, row, col };
@@ -740,6 +750,10 @@ function endGame() {
   running = false;
   finalScoreEl.textContent = score;
   gameoverOverlay.classList.add('show');
+
+  try {
+    window.parent.postMessage({ type: "game_over", gameSlug: "tetris", score: score }, "*");
+  } catch (_) {}
 }
 
 function togglePause() {
