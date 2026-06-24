@@ -11,6 +11,7 @@ const routes = [
   { path: "/about", name: "about", component: () => import("@/views/AboutPage.vue") },
   { path: "/games", name: "games", component: () => import("@/features/games/views/GamesPage.vue") },
   { path: "/toolbox", name: "toolbox", component: () => import("@/features/toolbox/views/ToolboxPage.vue") },
+  { path: "/toolbox/json-parser", name: "json-parser", component: () => import("@/features/toolbox/views/JsonParserPage.vue") },
   { path: "/admin", name: "admin", component: () => import("@/views/AdminPage.vue") },
   { path: "/admin/login", name: "admin-login", component: () => import("@/views/AdminLogin.vue") },
 ]
