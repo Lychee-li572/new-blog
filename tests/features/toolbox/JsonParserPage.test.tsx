@@ -10,6 +10,6 @@ test('shows error state for invalid JSON', async () => {
   render(JsonParserPage)
   const textarea = screen.getByLabelText(/输入 JSON/i)
   await fireEvent.update(textarea, '{invalid}')
-  await waitFor(() => expect(screen.getByText(/解析失败/)).toBeTruthy())
-  expect(screen.getByText(/无法解析输入内容/)).toBeTruthy()
+  await waitFor(() => expect(screen.getByText(/输入内容不是合法 JSON/)).toBeTruthy())
+  expect(screen.getByText(/通常是因为多余逗号、缺少引号或括号不匹配/)).toBeTruthy()
 })

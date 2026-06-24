@@ -9,6 +9,7 @@
       :value="modelValue"
       @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     />
+    <slot name="hint" />
     <div class="mt-3 flex flex-wrap items-center justify-end gap-2">
       <slot name="actions" />
     </div>

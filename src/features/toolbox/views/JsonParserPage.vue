@@ -7,6 +7,14 @@
 
     <div class="grid gap-4 md:grid-cols-2">
       <JsonInputPanel v-model="rawInput">
+        <template #hint>
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-xs" style="color: var(--text-secondary)">
+            <span>常用操作：</span>
+            <button class="rounded-full border px-2 py-1" style="border-color: var(--border)" @click="applyExample">示例 JSON</button>
+            <button class="rounded-full border px-2 py-1" style="border-color: var(--border)" @click="refresh">立即格式化</button>
+            <button class="rounded-full border px-2 py-1" style="border-color: var(--border)" @click="clear">清空</button>
+          </div>
+        </template>
         <template #actions>
           <button class="rounded-lg px-3 py-2 text-sm" style="background: var(--accent-lighter); color: var(--accent-primary)" @click="refresh">格式化</button>
           <button class="rounded-lg px-3 py-2 text-sm" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border)" @click="clear">清空</button>
@@ -18,13 +26,17 @@
           <button class="rounded-lg px-3 py-2 text-sm" style="background: var(--accent-lighter); color: var(--accent-primary)" @click="copyResult">复制结果</button>
           <button class="rounded-lg px-3 py-2 text-sm" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border)" @click="downloadResult">下载</button>
         </template>
-        <div v-if="error" class="m-4 rounded-lg border p-4 text-sm" style="border-color: #fca5a5; color: #b91c1c; background: #fef2f2">
-          <p class="font-medium">解析失败</p>
-          <p class="mt-1">无法解析输入内容：{{ error.message }}</p>
+
+        <div v-if="error" class="m-4 rounded-lg border p-4 text-sm" style="border-color: rgba(220,38,38,0.35); color: #991b1b; background: rgba(254,226,226,0.6)">
+          <p class="font-medium">输入内容不是合法 JSON</p>
+          <p class="mt-1">通常是因为多余逗号、缺少引号或括号不匹配。</p>
+          <p class="mt-2 break-all text-xs" style="color: #7f1d1d">原始提示：{{ error.message }}</p>
         </div>
+
         <template v-else-if="activeView === 'text'">
           <JsonTextView :text="formatted" />
         </template>
+
         <template v-else>
           <JsonTreeView :value="parsedValue" />
         </template>
@@ -44,6 +56,16 @@ import { useJsonParser } from '@/features/toolbox/composables/useJsonParser'
 const { rawInput, formatted, error, refresh } = useJsonParser()
 const activeView = ref<'text' | 'tree'>('text')
 
+const example = JSON.stringify(
+  {
+    name: '少吃熏鱼',
+    tools: ['json-parser'],
+    stats: { version: 1, draft: false }
+  },
+  null,
+  2
+)
+
 const parsedValue = computed(() => {
   if (!formatted.value) {
     return null
@@ -55,6 +77,10 @@ const parsedValue = computed(() => {
     return null
   }
 })
+
+function applyExample() {
+  rawInput.value = example
+}
 
 function clear() {
   rawInput.value = ''
