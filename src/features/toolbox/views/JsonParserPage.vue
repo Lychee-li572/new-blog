@@ -18,7 +18,11 @@
           <button class="rounded-lg px-3 py-2 text-sm" style="background: var(--accent-lighter); color: var(--accent-primary)" @click="copyResult">复制结果</button>
           <button class="rounded-lg px-3 py-2 text-sm" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border)" @click="downloadResult">下载</button>
         </template>
-        <template v-if="activeView === 'text'">
+        <div v-if="error" class="m-4 rounded-lg border p-4 text-sm" style="border-color: #fca5a5; color: #b91c1c; background: #fef2f2">
+          <p class="font-medium">解析失败</p>
+          <p class="mt-1">无法解析输入内容：{{ error.message }}</p>
+        </div>
+        <template v-else-if="activeView === 'text'">
           <JsonTextView :text="formatted" />
         </template>
         <template v-else>
@@ -37,7 +41,7 @@ import JsonTextView from '@/features/toolbox/components/JsonTextView.vue'
 import JsonTreeView from '@/features/toolbox/components/JsonTreeView.vue'
 import { useJsonParser } from '@/features/toolbox/composables/useJsonParser'
 
-const { rawInput, formatted, refresh } = useJsonParser()
+const { rawInput, formatted, error, refresh } = useJsonParser()
 const activeView = ref<'text' | 'tree'>('text')
 
 const parsedValue = computed(() => {
