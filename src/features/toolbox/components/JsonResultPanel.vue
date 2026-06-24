@@ -1,11 +1,11 @@
 <template>
   <div class="flex h-full flex-col rounded-xl border p-4" style="background: var(--bg-surface); border-color: var(--border)">
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-      <div class="inline-flex rounded-lg border" style="border-color: var(--border)">
+      <div class="inline-flex overflow-hidden rounded-[14px] border" style="border-color: var(--border)">
         <button
           v-for="option in viewOptions"
           :key="option.value"
-          class="px-3 py-1.5 text-sm"
+          class="px-3 py-1.5 text-sm transition-colors"
           :class="option.value === activeView ? 'font-semibold' : ''"
           :style="{
             background: option.value === activeView ? 'var(--accent-lighter)' : 'transparent',
