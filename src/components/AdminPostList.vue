@@ -20,12 +20,26 @@
             <h3 class="text-sm font-semibold truncate" style="font-family: var(--font-serif); color: var(--text-primary)">
               {{ post.title }}
             </h3>
+            <span v-if="post.featured" class="text-xs px-2 py-0.5 rounded-full" style="background: var(--accent-lighter); color: var(--accent-primary); font-family: var(--font-sans);">
+              推荐
+            </span>
           </div>
           <p class="text-xs" style="color: var(--text-secondary)">
             {{ post.slug }} · {{ post.created_at?.slice(0, 10) }}
           </p>
         </div>
         <div class="flex gap-2 ml-4">
+          <button
+            @click="$emit('feature', post)"
+            class="px-3 py-1.5 rounded-lg text-xs border-none cursor-pointer transition-all"
+            :style="{
+              background: post.featured ? 'var(--accent-primary)' : 'var(--accent-lighter)',
+              color: post.featured ? '#fff' : 'var(--accent-primary)',
+            }"
+            :title="post.featured ? '取消推荐' : '设为推荐'"
+          >
+            {{ post.featured ? '★ 已推荐' : '☆ 推荐' }}
+          </button>
           <button @click="$emit('edit', post)" class="px-3 py-1.5 rounded-lg text-xs border-none cursor-pointer" style="background: var(--accent-lighter); color: var(--accent-primary)">
             编辑
           </button>
@@ -40,5 +54,5 @@
 
 <script setup lang="ts">
 defineProps<{ posts: any[]; loading: boolean }>()
-defineEmits<{ create: []; edit: [post: any]; delete: [post: any] }>()
+defineEmits<{ create: []; edit: [post: any]; delete: [post: any]; feature: [post: any] }>()
 </script>

@@ -23,7 +23,7 @@ export function useAdmin() {
 
   // 列表查询（不含 content，轻量）
   async function fetchPosts(publishedOnly = false) {
-    let query = supabase.from("posts").select("id, slug, title, summary, category, tags, read_time, published, created_at, updated_at").order("created_at", { ascending: false })
+    let query = supabase.from("posts").select("id, slug, title, summary, category, tags, read_time, published, featured, created_at, updated_at").order("created_at", { ascending: false })
     if (publishedOnly) query = query.eq("published", true)
     const { data, error } = await query
     if (error) throw error
@@ -54,6 +54,15 @@ export function useAdmin() {
     if (error) throw error
   }
 
+  // 设置推荐文章（同时取消其他文章的推荐）
+  async function setFeatured(postId: string) {
+    // 先取消所有文章的推荐
+    await supabase.from("posts").update({ featured: false }).eq("featured", true)
+    // 再设置当前文章为推荐
+    const { error } = await supabase.from("posts").update({ featured: true }).eq("id", postId)
+    if (error) throw error
+  }
+
   return {
     isAuthenticated: computed(() => isAuthenticated.value),
     login,
@@ -64,5 +73,6 @@ export function useAdmin() {
     createPost,
     updatePost,
     deletePost,
+    setFeatured,
   }
 }

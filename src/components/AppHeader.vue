@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="fixed top-0 left-0 right-0 z-50 h-14 flex items-center justify-center"
+    class="fixed top-0 left-0 right-0 z-50 h-18 flex items-center justify-center"
     style="padding: 8px 24px;"
   >
     <div

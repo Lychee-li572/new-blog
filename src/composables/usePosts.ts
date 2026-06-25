@@ -13,12 +13,14 @@ export interface Post {
   tags: string[]
   readTime?: number
   published: boolean
+  featured?: boolean
   html: string
   raw: string
   source: "local" | "supabase"
 }
 
 const posts = ref<Post[]>([])
+const featuredPost = ref<Post | null>(null)
 const loading = ref(false)
 const loaded = ref(false)
 
@@ -99,7 +101,7 @@ function loadLocalPosts(): Post[] {
 async function fetchRemotePosts(): Promise<Post[]> {
   const { data, error } = await supabase
     .from("posts")
-    .select("id, slug, title, summary, category, tags, read_time, published, content, created_at, updated_at")
+    .select("id, slug, title, summary, category, tags, read_time, published, featured, content, created_at, updated_at")
     .eq("published", true)
     .order("updated_at", { ascending: true, nullsFirst: false })
 
@@ -118,6 +120,7 @@ async function fetchRemotePosts(): Promise<Post[]> {
       tags: row.tags ?? [],
       readTime: row.read_time,
       published: row.published,
+      featured: row.featured ?? false,
       html: renderMarkdown(raw),
       raw,
       source: "supabase" as const,
@@ -149,9 +152,39 @@ export function usePosts() {
     const remote = await fetchRemotePosts()
     posts.value = mergePosts(local, remote)
 
+    // 获取推荐文章
+    const { data: featured } = await supabase
+      .from("posts")
+      .select("id, slug, title, summary, category, tags, read_time, published, featured, content, created_at, updated_at")
+      .eq("featured", true)
+      .eq("published", true)
+      .single()
+
+    if (featured) {
+      const raw: string = featured.content ?? ""
+      featuredPost.value = {
+        id: featured.id,
+        slug: featured.slug,
+        title: featured.title,
+        date: featured.created_at ? featured.created_at.slice(0, 10) : "",
+        updated_at: featured.updated_at ? featured.updated_at.slice(0, 10) : undefined,
+        summary: featured.summary ?? raw.slice(0, 120),
+        category: featured.category,
+        tags: featured.tags ?? [],
+        readTime: featured.read_time,
+        published: featured.published,
+        featured: true,
+        html: renderMarkdown(raw),
+        raw,
+        source: "supabase",
+      }
+    } else {
+      featuredPost.value = null
+    }
+
     loading.value = false
     loaded.value = true
   }
 
-  return { posts, loading, loaded, loadPosts }
+  return { posts, featuredPost, loading, loaded, loadPosts }
 }

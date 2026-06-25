@@ -7,7 +7,7 @@
         <button @click="handleLogout" class="px-4 py-2 rounded-lg text-sm cursor-pointer" style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-secondary)">退出登录</button>
       </div>
       <AdminPostEditor v-if="editing" :post="editing" @saved="onSaved" @cancel="editing = null" />
-      <AdminPostList v-else :posts="posts" :loading="loading" @create="editing = emptyPost" @edit="handleEdit" @delete="handleDelete" />
+      <AdminPostList v-else :posts="posts" :loading="loading" @create="editing = emptyPost" @edit="handleEdit" @delete="handleDelete" @feature="handleFeature" />
     </div>
   </div>
 </template>
@@ -19,7 +19,7 @@ import AdminLogin from "@/views/AdminLogin.vue"
 import AdminPostList from "@/components/AdminPostList.vue"
 import AdminPostEditor from "@/components/AdminPostEditor.vue"
 
-const { isAuthenticated, logout, restoreSession, fetchPosts, fetchPost, deletePost } = useAdmin()
+const { isAuthenticated, logout, restoreSession, fetchPosts, fetchPost, deletePost, setFeatured } = useAdmin()
 
 const posts = ref<any[]>([])
 const loading = ref(false)
@@ -56,6 +56,13 @@ async function onSaved() {
 async function handleDelete(post: any) {
   if (!confirm(`确定删除「${post.title}」？`)) return
   try { await deletePost(post.id); await loadPosts() } catch {}
+}
+
+async function handleFeature(post: any) {
+  try {
+    await setFeatured(post.id)
+    await loadPosts()
+  } catch {}
 }
 
 function handleLogout() { logout(); posts.value = [] }
