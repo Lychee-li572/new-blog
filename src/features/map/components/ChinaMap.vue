@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full" ref="chartRef" style="height: calc(100vh - 56px)"></div>
+  <div class="w-full" ref="chartRef" style="height: calc(100vh - 80px)"></div>
 </template>
 
 <script setup lang="ts">

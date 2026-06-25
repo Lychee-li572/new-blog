@@ -7,7 +7,7 @@
       class="flex items-center justify-between h-full w-full"
       style="max-width: 1100px; padding: 0 24px; border-radius: 9999px;"
       :style="{
-        background: theme === 'dark' ? 'rgba(28, 25, 23, 0.65)' : 'rgba(253, 246, 236, 0.65)',
+        background: theme === 'dark' ? 'rgba(28, 25, 23, 0.65)' : 'rgba(180, 140, 80, 0.25)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
       }"

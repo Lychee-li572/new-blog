@@ -3,7 +3,7 @@
     <ProgressBar />
     <AppHeader />
     <HeroBanner v-if="route.name === 'home'" />
-    <main class="flex-1" :style="{ background: 'var(--bg-base)', position: 'relative', zIndex: 1, paddingTop: route.name === 'home' ? '80px' : '56px' }">
+    <main class="flex-1" :style="{ background: 'var(--bg-base)', position: 'relative', zIndex: 1, paddingTop: '80px' }">
       <router-view />
     </main>
   </div>
