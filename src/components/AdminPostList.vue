@@ -30,6 +30,7 @@
         </div>
         <div class="flex gap-2 ml-4">
           <button
+            v-if="post.published"
             @click="$emit('feature', post)"
             class="px-3 py-1.5 rounded-lg text-xs border-none cursor-pointer transition-all"
             :style="{
