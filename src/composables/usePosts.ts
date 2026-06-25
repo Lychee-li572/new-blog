@@ -101,7 +101,7 @@ function loadLocalPosts(): Post[] {
 async function fetchRemotePosts(): Promise<Post[]> {
   const { data, error } = await supabase
     .from("posts")
-    .select("id, slug, title, summary, category, tags, read_time, published, featured, content, created_at, updated_at")
+    .select("id, slug, title, summary, category, tags, read_time, published, content, created_at, updated_at")
     .eq("published", true)
     .order("updated_at", { ascending: true, nullsFirst: false })
 
@@ -120,7 +120,6 @@ async function fetchRemotePosts(): Promise<Post[]> {
       tags: row.tags ?? [],
       readTime: row.read_time,
       published: row.published,
-      featured: row.featured ?? false,
       html: renderMarkdown(raw),
       raw,
       source: "supabase" as const,
@@ -152,33 +151,38 @@ export function usePosts() {
     const remote = await fetchRemotePosts()
     posts.value = mergePosts(local, remote)
 
-    // 获取推荐文章
-    const { data: featured } = await supabase
-      .from("posts")
-      .select("id, slug, title, summary, category, tags, read_time, published, featured, content, created_at, updated_at")
-      .eq("featured", true)
-      .eq("published", true)
-      .single()
+    // 获取推荐文章（单独查询，featured 列可能尚未添加）
+    try {
+      const { data: featured } = await supabase
+        .from("posts")
+        .select("id, slug, title, summary, category, tags, read_time, published, content, created_at, updated_at")
+        .eq("featured", true)
+        .eq("published", true)
+        .single()
 
-    if (featured) {
-      const raw: string = featured.content ?? ""
-      featuredPost.value = {
-        id: featured.id,
-        slug: featured.slug,
-        title: featured.title,
-        date: featured.created_at ? featured.created_at.slice(0, 10) : "",
-        updated_at: featured.updated_at ? featured.updated_at.slice(0, 10) : undefined,
-        summary: featured.summary ?? raw.slice(0, 120),
-        category: featured.category,
-        tags: featured.tags ?? [],
-        readTime: featured.read_time,
-        published: featured.published,
-        featured: true,
-        html: renderMarkdown(raw),
-        raw,
-        source: "supabase",
+      if (featured) {
+        const raw: string = featured.content ?? ""
+        featuredPost.value = {
+          id: featured.id,
+          slug: featured.slug,
+          title: featured.title,
+          date: featured.created_at ? featured.created_at.slice(0, 10) : "",
+          updated_at: featured.updated_at ? featured.updated_at.slice(0, 10) : undefined,
+          summary: featured.summary ?? raw.slice(0, 120),
+          category: featured.category,
+          tags: featured.tags ?? [],
+          readTime: featured.read_time,
+          published: featured.published,
+          featured: true,
+          html: renderMarkdown(raw),
+          raw,
+          source: "supabase",
+        }
+      } else {
+        featuredPost.value = null
       }
-    } else {
+    } catch {
+      // featured 列可能尚未添加，忽略
       featuredPost.value = null
     }
 

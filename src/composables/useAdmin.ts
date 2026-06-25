@@ -23,11 +23,24 @@ export function useAdmin() {
 
   // 列表查询（不含 content，轻量）
   async function fetchPosts(publishedOnly = false) {
-    let query = supabase.from("posts").select("id, slug, title, summary, category, tags, read_time, published, featured, created_at, updated_at").order("created_at", { ascending: false })
+    let query = supabase.from("posts").select("id, slug, title, summary, category, tags, read_time, published, created_at, updated_at").order("created_at", { ascending: false })
     if (publishedOnly) query = query.eq("published", true)
     const { data, error } = await query
     if (error) throw error
-    return data
+
+    // 单独查询 featured 状态，避免列不存在时整个查询失败
+    let featuredIds: Set<string> = new Set()
+    try {
+      const { data: featuredData } = await supabase.from("posts").select("id").eq("featured", true)
+      if (featuredData) featuredIds = new Set(featuredData.map((r: any) => r.id))
+    } catch {
+      // featured 列可能尚未添加，忽略错误
+    }
+
+    return (data ?? []).map((post: any) => ({
+      ...post,
+      featured: featuredIds.has(post.id),
+    }))
   }
 
   // 单篇详情（含 content，用于编辑回显）
