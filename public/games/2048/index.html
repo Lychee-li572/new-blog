@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2048 小游戏</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="heading">
+          <h1>2048</h1>
+          <p>使用键盘方向键合并数字</p>
+        </div>
+        <div class="actions">
+          <section class="score-card" aria-label="当前得分">
+            <span>当前得分</span>
+            <strong id="score">0</strong>
+          </section>
+          <button id="restart-button" type="button">重新开始</button>
+        </div>
+      </header>
+
+      <section class="board-section" aria-label="游戏棋盘">
+        <div id="board" class="board"></div>
+      </section>
+
+      <section id="touch-controls" class="touch-controls hidden" aria-label="移动端方向控制">
+        <button class="touch-button touch-up" type="button" data-direction="up">↑</button>
+        <button class="touch-button touch-left" type="button" data-direction="left">←</button>
+        <button class="touch-button touch-right" type="button" data-direction="right">→</button>
+        <button class="touch-button touch-down" type="button" data-direction="down">↓</button>
+      </section>
+    </main>
+
+    <div id="game-over-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+      <div class="modal-card">
+        <h2 id="game-over-title">游戏结束</h2>
+        <p>本次总得分</p>
+        <strong id="final-score">0</strong>
+        <button id="modal-restart-button" type="button">重新开始</button>
+      </div>
+    </div>
+
+    <script src="./src/mobile-controls.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
