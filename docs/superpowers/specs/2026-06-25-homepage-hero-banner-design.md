@@ -99,25 +99,48 @@ backdrop-filter: blur(12px);
 - 高度：`60vh`（约占视口 60%）
 - 定位：`position: relative`（作为渐变伪元素的定位锚点）
 
-### 背景图
+### 背景视频
 
-```css
-background-image: url('/hero-bg.jpg'); /* 后续替换为实际图片 */
-background-size: cover;
-background-position: center;
-background-repeat: no-repeat;
+使用 HTML5 `<video>` 元素作为背景，支持自动播放、循环、静音：
+
+```html
+<video class="hero-video" autoplay muted loop playsinline poster="/hero-bg-poster.jpg">
+  <source src="/hero-bg.webm" type="video/webm" />
+  <source src="/hero-bg.mp4" type="video/mp4" />
+</video>
 ```
 
-### 图片规格要求
+```css
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+```
+
+### 视频规格要求
 
 | 属性 | 建议值 |
 |------|--------|
-| 最小宽度 | 1920px |
-| 宽高比 | 16:9 或更宽（如 21:9） |
-| 文件格式 | WebP（优先）或 JPG |
-| 文件大小 | ≤ 500KB（建议压缩） |
+| 分辨率 | 1920x1080（1080p） |
+| 帧率 | 30fps |
+| 时长 | 5-15 秒（循环播放） |
+| 文件格式 | MP4（H.264）+ WebM（VP9）双格式 |
+| 文件大小 | MP4 ≤ 3MB，WebM ≤ 5MB |
 | 风格 | 与温暖书卷风/个人博客调性匹配 |
-| 存放路径 | `public/hero-bg.jpg` |
+| 存放路径 | `public/hero-bg.mp4`、`public/hero-bg.webm` |
+| 封面图 | `public/hero-bg-poster.jpg`（视频第一帧） |
+
+### 视频优化
+
+- 使用 ffmpeg 压缩：`-vf "scale=1920:1080" -r 30 -c:v libx264 -preset slow -crf 28`
+- 移除音轨（`-an`）
+- MP4 添加 `movflags +faststart` 优化首屏加载
+- WebM 使用 VP9 编码提供更好压缩比
 
 ### 中心内容
 
@@ -226,6 +249,7 @@ main {
 - 背景图建议使用 WebP 格式，控制在 500KB 以内
 - 可考虑添加 `loading="lazy"` 或使用 CSS `image-set()` 提供多分辨率版本
 - `backdrop-filter` 在部分旧浏览器上不支持，需要提供降级方案（纯半透明背景）
+- `prefers-reduced-motion: reduce` 时隐藏视频背景，显示封面图
 
 ---
 
@@ -238,7 +262,9 @@ main {
 | `src/components/AppHeader.vue` | 修改 | 改为 fixed 定位，调整毛玻璃样式和文字颜色 |
 | `src/views/HomePage.vue` | 修改 | 移除旧 HeroSection，重构首页内容 |
 | `src/components/HeroSection.vue` | 修改/移除 | 站名标语部分已迁移至 HeroBanner，保留或重构其余内容 |
-| `public/hero-bg.jpg` | **新增** | Hero 背景图（占位，后续替换） |
+| `public/hero-bg.mp4` | **新增** | Hero 背景视频（MP4 格式） |
+| `public/hero-bg.webm` | **新增** | Hero 背景视频（WebM 格式，备用） |
+| `public/hero-bg-poster.jpg` | **新增** | Hero 视频封面图 |
 | `src/styles/tokens.css` | 可能修改 | 如需新增 Hero 相关变量 |
 | `src/styles/base.css` | 可能修改 | 调整 body/main 的默认 padding |
 

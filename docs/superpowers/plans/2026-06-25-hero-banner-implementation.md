@@ -23,46 +23,64 @@
 
 ---
 
-### Task 1: 创建占位背景图
+### Task 1: 压缩背景视频
 
 **Files:**
-- Create: `public/hero-bg.jpg`
+- Create: `public/hero-bg.mp4`
+- Create: `public/hero-bg.webm`
+- Create: `public/hero-bg-poster.jpg`
 
-- [ ] **Step 1: 生成一张临时占位背景图**
-
-使用 Python 生成一张 1920x1080 的渐变占位图：
+- [ ] **Step 1: 压缩 MP4 格式**
 
 ```bash
-cd /Users/lychee/Workspace/new-blog
-python3 -c "
-from PIL import Image
-img = Image.new('RGB', (1920, 1080))
-for y in range(1080):
-    r = int(40 + (y / 1080) * 60)
-    g = int(20 + (y / 1080) * 40)
-    b = int(30 + (y / 1080) * 50)
-    for x in range(1920):
-        img.putpixel((x, y), (r, g, b))
-img.save('public/hero-bg.jpg', quality=85)
-print('Done: public/hero-bg.jpg')
-"
+cd /Users/lychee/Workspace/new-blog/public
+ffmpeg -y -i "/Users/lychee/Downloads/【哲风壁纸】水墨武士-水墨风格.mp4" \
+  -vf "scale=1920:1080" \
+  -r 30 \
+  -c:v libx264 -preset slow -crf 28 \
+  -an \
+  -movflags +faststart \
+  hero-bg.mp4
 ```
 
-Expected: 生成 `public/hero-bg.jpg`，约 1920x1080 暗色渐变图
+Expected: 生成 `public/hero-bg.mp4`，约 2-3MB
 
-- [ ] **Step 2: 验证文件存在**
+- [ ] **Step 2: 压缩 WebM 格式**
 
 ```bash
-ls -lh public/hero-bg.jpg
+cd /Users/lychee/Workspace/new-blog/public
+ffmpeg -y -i "/Users/lychee/Downloads/【哲风壁纸】水墨武士-水墨风格.mp4" \
+  -vf "scale=1920:1080" \
+  -r 30 \
+  -c:v libvpx-vp9 -crf 35 -b:v 0 \
+  -an \
+  hero-bg.webm
 ```
 
-Expected: 文件存在，大小约 100-300KB
+Expected: 生成 `public/hero-bg.webm`，约 4-5MB
 
-- [ ] **Step 3: 提交**
+- [ ] **Step 3: 生成封面图**
 
 ```bash
-git add public/hero-bg.jpg
-git commit -m "chore: 添加 Hero Banner 占位背景图"
+cd /Users/lychee/Workspace/new-blog/public
+ffmpeg -y -i hero-bg.mp4 -vframes 1 -q:v 2 hero-bg-poster.jpg
+```
+
+Expected: 生成 `public/hero-bg-poster.jpg`，约 200KB
+
+- [ ] **Step 4: 验证文件**
+
+```bash
+ls -lh public/hero-bg*
+```
+
+Expected: 三个文件都存在
+
+- [ ] **Step 5: 提交**
+
+```bash
+git add public/hero-bg.mp4 public/hero-bg.webm public/hero-bg-poster.jpg
+git commit -m "chore: 添加 Hero Banner 背景视频"
 ```
 
 ---
@@ -580,7 +598,7 @@ git commit -m "style: 微调 Hero Banner 样式细节"
 ## 完成标准
 
 - [ ] Hero Banner 在所有页面全幅显示
-- [ ] 背景图 cover 居中，高度 60vh（响应式）
+- [ ] 背景视频自动播放循环，cover 居中，高度 60vh（响应式）
 - [ ] 站名和标语垂直水平居中，白色文字带阴影
 - [ ] 底部 120px 渐变过渡到正文背景色
 - [ ] 导航栏 fixed 定位，毛玻璃效果，白色文字
