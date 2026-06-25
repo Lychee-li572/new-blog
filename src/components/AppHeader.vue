@@ -1,11 +1,10 @@
 <template>
   <nav
-    class="sticky top-0 z-50 h-14"
+    class="fixed top-0 left-0 right-0 z-50 h-14"
     :style="{
-      background: 'color-mix(in srgb, var(--bg-base) 90%, transparent)',
-      backdropFilter: 'blur(8px)',
-      WebkitBackdropFilter: 'blur(8px)',
-      borderBottom: '1px solid var(--border)',
+      background: theme === 'dark' ? 'rgba(28, 25, 23, 0.65)' : 'rgba(253, 246, 236, 0.65)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
     }"
   >
     <div class="max-w-[1100px] mx-auto px-6 h-full flex items-center justify-between">
@@ -13,21 +12,19 @@
       <router-link
         to="/"
         class="text-lg no-underline transition-colors"
-        style="font-family: var(--font-brand); color: var(--accent-primary)"
+        style="font-family: var(--font-brand); color: #ffffff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);"
       >
         少吃熏鱼
       </router-link>
 
       <!-- 导航链接 -->
-      <div class="flex items-center gap-6">
+      <div class="flex items-center gap-3">
         <router-link
           v-for="link in navLinks"
           :key="link.path"
           :to="link.path"
-          class="text-sm transition-colors no-underline"
-          style="font-family: var(--font-sans); color: var(--text-secondary)"
-          @mouseenter="$event.target.style.color = 'var(--accent-primary)'"
-          @mouseleave="$event.target.style.color = 'var(--text-secondary)'"
+          class="nav-btn text-sm no-underline transition-all"
+          style="font-family: var(--font-sans)"
         >
           {{ link.label }}
         </router-link>
@@ -35,10 +32,7 @@
         <!-- 主题切换 -->
         <button
           @click="toggle"
-          class="w-8 h-8 flex items-center justify-center rounded-lg text-base border-none cursor-pointer transition-all"
-          style="background: var(--accent-lighter); color: var(--accent-primary)"
-          @mouseenter="$event.target.style.background = 'var(--accent-light)'"
-          @mouseleave="$event.target.style.background = 'var(--accent-lighter)'"
+          class="nav-btn w-8 h-8 flex items-center justify-center rounded-full text-base border-none cursor-pointer transition-all"
           :title="theme === 'dark' ? '切换亮色模式' : '切换暗色模式'"
         >
           {{ theme === "dark" ? "☀️" : "🌙" }}
@@ -61,3 +55,23 @@ const navLinks = [
   { path: "/blog", label: "博客" },
 ]
 </script>
+
+<style scoped>
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+</style>
