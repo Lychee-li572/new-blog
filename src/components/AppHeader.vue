@@ -1,13 +1,17 @@
 <template>
   <nav
-    class="fixed top-0 left-0 right-0 z-50 h-14"
-    :style="{
-      background: theme === 'dark' ? 'rgba(28, 25, 23, 0.65)' : 'rgba(253, 246, 236, 0.65)',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
-    }"
+    class="fixed top-0 left-0 right-0 z-50 h-14 flex items-center justify-center"
+    style="padding: 8px 24px;"
   >
-    <div class="max-w-[1100px] mx-auto px-6 h-full flex items-center justify-between">
+    <div
+      class="flex items-center justify-between h-full w-full"
+      style="max-width: 1100px; padding: 0 24px; border-radius: 9999px;"
+      :style="{
+        background: theme === 'dark' ? 'rgba(28, 25, 23, 0.65)' : 'rgba(253, 246, 236, 0.65)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }"
+    >
       <!-- 品牌名 -->
       <router-link
         to="/"
@@ -68,10 +72,12 @@ const navLinks = [
   font-weight: 500;
   letter-spacing: 0.01em;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #d97706;
   color: #ffffff;
+  text-shadow: none;
 }
 </style>
