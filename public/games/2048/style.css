@@ -31,6 +31,85 @@ body {
   padding: 32px 0 40px;
 }
 
+/* ===== 欢迎页 ===== */
+.welcome-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+
+.welcome-card {
+  background: var(--panel);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 40px 32px;
+  text-align: center;
+  width: 100%;
+}
+
+.welcome-title {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.welcome-subtitle {
+  margin: 8px 0 28px;
+  font-size: 16px;
+  color: #756657;
+}
+
+.instructions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  max-width: 280px;
+  margin: 0 auto 24px;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f1e6d7;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.instruction-item kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--panel);
+  border: 1px solid #d9cdbf;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  box-shadow: 0 2px 0 #c8b9a6;
+}
+
+.welcome-tip {
+  margin: 0 0 28px;
+  font-size: 13px;
+  color: #a0927f;
+}
+
+.start-button {
+  width: 100%;
+  max-width: 240px;
+  padding: 14px 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* ===== 顶栏 ===== */
 .topbar,
 .modal-card {
   background: var(--panel);
@@ -96,6 +175,7 @@ button:hover {
   transform: translateY(-1px);
 }
 
+/* ===== 棋盘 ===== */
 .board-section {
   margin-top: 18px;
   touch-action: none;
@@ -184,6 +264,20 @@ button:hover {
   }
 }
 
+/* ===== 游戏控制按钮 ===== */
+.game-controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.game-control-btn {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ===== 移动端方向键 ===== */
 .touch-controls {
   margin-top: 18px;
   display: grid;
@@ -217,6 +311,7 @@ button:hover {
   grid-row: 2;
 }
 
+/* ===== 弹窗 ===== */
 .modal {
   position: fixed;
   inset: 0;
@@ -243,7 +338,6 @@ button:hover {
 
 @media (max-width: 560px) {
   .topbar,
-  .actions,
   .actions {
     width: 100%;
   }

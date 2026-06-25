@@ -7,15 +7,29 @@
     ArrowRight: "right",
   };
 
+  const welcomeScreen = document.querySelector("#welcome-screen");
+  const gameScreen = document.querySelector("#game-screen");
+  const startButton = document.querySelector("#start-button");
   const boardElement = document.querySelector("#board");
   const scoreElement = document.querySelector("#score");
   const finalScoreElement = document.querySelector("#final-score");
   const restartButton = document.querySelector("#restart-button");
+  const pauseButton = document.querySelector("#pause-button");
+  const resumeButton = document.querySelector("#resume-button");
   const modalRestartButton = document.querySelector("#modal-restart-button");
-  const modalElement = document.querySelector("#game-over-modal");
+  const gameOverModal = document.querySelector("#game-over-modal");
+  const pauseOverlay = document.querySelector("#pause-overlay");
+  const pauseScoreElement = document.querySelector("#pause-score");
   const touchControlsElement = document.querySelector("#touch-controls");
   const tileElements = [];
   const mobileControls = window.Mobile2048Controls;
+
+  // gamePhase: "idle" | "playing" | "paused" | "gameover"
+  let gamePhase = "idle";
+  let state = null;
+  let animationLock = false;
+  let pendingBoardAnimationFrame = null;
+  let touchStartPoint = null;
 
   function cloneBoard(board) {
     return board.map((row) => row.slice());
@@ -33,7 +47,6 @@
 
   function getEmptyCells(board) {
     const cells = [];
-
     for (let row = 0; row < BOARD_SIZE; row += 1) {
       for (let col = 0; col < BOARD_SIZE; col += 1) {
         if (board[row][col] === 0) {
@@ -41,7 +54,6 @@
         }
       }
     }
-
     return cells;
   }
 
@@ -49,7 +61,6 @@
     const values = row.filter((value) => value !== 0);
     const merged = [];
     let scoreGain = 0;
-
     for (let index = 0; index < values.length; index += 1) {
       if (values[index] === values[index + 1]) {
         const mergedValue = values[index] * 2;
@@ -60,11 +71,9 @@
         merged.push(values[index]);
       }
     }
-
     while (merged.length < BOARD_SIZE) {
       merged.push(0);
     }
-
     return { row: merged, scoreGain };
   }
 
@@ -79,7 +88,6 @@
   function moveBoardLeft(board) {
     const movedRows = board.map((row) => mergeRowLeft(row));
     const nextBoard = movedRows.map((entry) => entry.row);
-
     return {
       board: nextBoard,
       scoreGain: movedRows.reduce((sum, entry) => sum + entry.scoreGain, 0),
@@ -91,7 +99,6 @@
     if (direction === "left") {
       return moveBoardLeft(cloneBoard(board));
     }
-
     if (direction === "right") {
       const reversed = reverseRows(cloneBoard(board));
       const moved = moveBoardLeft(reversed);
@@ -101,7 +108,6 @@
         moved: moved.moved,
       };
     }
-
     if (direction === "up") {
       const transposed = transpose(cloneBoard(board));
       const moved = moveBoardLeft(transposed);
@@ -111,7 +117,6 @@
         moved: moved.moved,
       };
     }
-
     if (direction === "down") {
       const transposed = transpose(cloneBoard(board));
       const reversed = reverseRows(transposed);
@@ -122,7 +127,6 @@
         moved: moved.moved,
       };
     }
-
     return {
       board: cloneBoard(board),
       scoreGain: 0,
@@ -133,15 +137,12 @@
   function addRandomTile(board) {
     const nextBoard = cloneBoard(board);
     const emptyCells = getEmptyCells(nextBoard);
-
     if (emptyCells.length === 0) {
       return nextBoard;
     }
-
     const index = Math.floor(Math.random() * emptyCells.length);
     const cell = emptyCells[index];
     nextBoard[cell.row][cell.col] = Math.random() < 0.9 ? 2 : 4;
-
     return nextBoard;
   }
 
@@ -149,17 +150,12 @@
     for (let row = 0; row < BOARD_SIZE; row += 1) {
       for (let col = 0; col < BOARD_SIZE; col += 1) {
         const value = board[row][col];
-
-        if (value === 0) {
-          return false;
-        }
-
+        if (value === 0) return false;
         if (board[row][col + 1] === value || (board[row + 1] && board[row + 1][col] === value)) {
           return false;
         }
       }
     }
-
     return true;
   }
 
@@ -167,34 +163,22 @@
     let board = createEmptyBoard();
     board = addRandomTile(board);
     board = addRandomTile(board);
-
     return {
-      board,
+      board: board,
       score: 0,
       gameOver: false,
     };
   }
 
   function getTileClassName(value) {
-    if (value === 0) {
-      return "tile tile-empty";
-    }
-
-    if (value > 2048) {
-      return "tile tile-super";
-    }
-
+    if (value === 0) return "tile tile-empty";
+    if (value > 2048) return "tile tile-super";
     return "tile tile-" + value;
   }
 
-  let state = createInitialState();
-  let animationLock = false;
-  let pendingBoardAnimationFrame = null;
-  let touchStartPoint = null;
-
   function initializeBoard() {
     boardElement.innerHTML = "";
-
+    tileElements.length = 0;
     for (let index = 0; index < BOARD_SIZE * BOARD_SIZE; index += 1) {
       const tile = document.createElement("div");
       tile.className = "tile tile-empty";
@@ -210,11 +194,9 @@
       "board-moving-up",
       "board-moving-down"
     );
-
     if (pendingBoardAnimationFrame !== null) {
       cancelAnimationFrame(pendingBoardAnimationFrame);
     }
-
     pendingBoardAnimationFrame = requestAnimationFrame(function () {
       boardElement.classList.add("board-moving-" + direction);
       window.setTimeout(function () {
@@ -228,13 +210,11 @@
       touchControlsElement.classList.add("hidden");
       return;
     }
-
     const coarseQuery = window.matchMedia ? window.matchMedia("(any-pointer: coarse)") : null;
     const visible = mobileControls.shouldShowTouchControls({
       maxTouchPoints: navigator.maxTouchPoints || 0,
       anyPointerCoarse: coarseQuery ? coarseQuery.matches : false,
     });
-
     touchControlsElement.classList.toggle("hidden", !visible);
   }
 
@@ -244,10 +224,8 @@
         const tileIndex = rowIndex * BOARD_SIZE + colIndex;
         const tile = tileElements[tileIndex];
         const previousValue = previousBoard ? previousBoard[rowIndex][colIndex] : null;
-
         tile.className = getTileClassName(value);
         tile.textContent = value === 0 ? "" : String(value);
-
         if (previousBoard && previousValue !== value && value !== 0) {
           tile.classList.add("tile-updated");
           window.setTimeout(function () {
@@ -262,33 +240,65 @@
     scoreElement.textContent = String(state.score);
   }
 
-  function showGameOver() {
-    finalScoreElement.textContent = String(state.score);
-    modalElement.classList.remove("hidden");
-
-    try {
-      window.parent.postMessage({ type: "game_over", gameSlug: "2048", score: state.score }, "*");
-    } catch (_) {}
-  }
-
-  function hideGameOver() {
-    modalElement.classList.add("hidden");
-  }
-
   function render(previousBoard) {
     renderBoard(previousBoard);
     renderScore();
   }
 
+  function showGameOver() {
+    finalScoreElement.textContent = String(state.score);
+    gameOverModal.classList.remove("hidden");
+    gamePhase = "gameover";
+    try {
+      window.parent.postMessage({ type: "game_over", gameSlug: "2048", score: state.score }, "*");
+    } catch (_) {}
+  }
+
+  function hideModal(el) {
+    el.classList.add("hidden");
+  }
+
   function restartGame() {
     state = createInitialState();
-    hideGameOver();
+    gamePhase = "playing";
+    hideModal(gameOverModal);
+    hideModal(pauseOverlay);
+    pauseButton.textContent = "暂停";
     animationLock = false;
     render();
   }
 
+  function startGame() {
+    state = createInitialState();
+    gamePhase = "playing";
+    welcomeScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
+    pauseButton.textContent = "暂停";
+    animationLock = false;
+    initializeBoard();
+    syncTouchControlsVisibility();
+    render();
+  }
+
+  function togglePause() {
+    if (gamePhase === "playing") {
+      gamePhase = "paused";
+      pauseButton.textContent = "继续";
+      pauseScoreElement.textContent = String(state.score);
+      pauseOverlay.classList.remove("hidden");
+    } else if (gamePhase === "paused") {
+      resumeGame();
+    }
+  }
+
+  function resumeGame() {
+    gamePhase = "playing";
+    pauseButton.textContent = "暂停";
+    hideModal(pauseOverlay);
+  }
+
   function handleMove(direction) {
-    if (state.gameOver || animationLock) {
+    if (gamePhase !== "playing" || animationLock) {
       return;
     }
 
@@ -305,7 +315,7 @@
     state = {
       board: nextBoard,
       score: nextScore,
-      gameOver,
+      gameOver: gameOver,
     };
 
     if (gameOver) {
@@ -320,26 +330,27 @@
     }, 140);
   }
 
+  // --- 事件绑定 ---
+  startButton.addEventListener("click", startGame);
+
   document.addEventListener("keydown", function (event) {
     const direction = KEYBOARD_DIRECTION_MAP[event.key];
-    if (!direction || !modalElement.classList.contains("hidden")) {
+    if (!direction) return;
+    // 暂停弹窗时，按空格/回车恢复
+    if (gamePhase === "paused" && (event.key === " " || event.key === "Enter")) {
+      event.preventDefault();
+      resumeGame();
       return;
     }
-
+    if (gamePhase !== "playing") return;
     event.preventDefault();
     handleMove(direction);
   });
 
   boardElement.addEventListener("touchstart", function (event) {
     const touch = event.touches[0];
-    if (!touch) {
-      return;
-    }
-
-    touchStartPoint = {
-      startX: touch.clientX,
-      startY: touch.clientY,
-    };
+    if (!touch) return;
+    touchStartPoint = { startX: touch.clientX, startY: touch.clientY };
   }, { passive: true });
 
   boardElement.addEventListener("touchend", function (event) {
@@ -347,13 +358,11 @@
       touchStartPoint = null;
       return;
     }
-
     const touch = event.changedTouches[0];
     if (!touch) {
       touchStartPoint = null;
       return;
     }
-
     const direction = mobileControls.getSwipeDirection({
       startX: touchStartPoint.startX,
       startY: touchStartPoint.startY,
@@ -361,30 +370,20 @@
       endY: touch.clientY,
       threshold: 24,
     });
-
     touchStartPoint = null;
-
-    if (!direction) {
-      return;
-    }
-
+    if (!direction) return;
     event.preventDefault();
     handleMove(direction);
   });
 
   touchControlsElement.addEventListener("click", function (event) {
     const button = event.target.closest("[data-direction]");
-    if (!button) {
-      return;
-    }
-
+    if (!button) return;
     handleMove(button.getAttribute("data-direction"));
   });
 
+  pauseButton.addEventListener("click", togglePause);
+  resumeButton.addEventListener("click", resumeGame);
   restartButton.addEventListener("click", restartGame);
   modalRestartButton.addEventListener("click", restartGame);
-
-  initializeBoard();
-  syncTouchControlsVisibility();
-  render();
 })();
