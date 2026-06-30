@@ -13,6 +13,7 @@ const routes = [
   { path: "/games/:gameSlug", name: "game-detail", component: () => import("@/features/games/views/GameDetailPage.vue") },
   { path: "/toolbox", name: "toolbox", component: () => import("@/features/toolbox/views/ToolboxPage.vue") },
   { path: "/toolbox/json-parser", name: "json-parser", component: () => import("@/features/toolbox/views/JsonParserPage.vue") },
+  { path: "/toolbox/qrcode", name: "qrcode", component: () => import("@/features/toolbox/views/QrCodePage.vue") },
   { path: "/admin", name: "admin", component: () => import("@/views/AdminPage.vue") },
   { path: "/admin/login", name: "admin-login", component: () => import("@/views/AdminLogin.vue") },
 ]

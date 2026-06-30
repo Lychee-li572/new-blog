@@ -15,6 +15,16 @@
         <p class="mt-2 text-sm" style="color: var(--text-secondary)">粘贴 JSON，快速格式化、压缩并以文本或树形结构查看。</p>
         <div class="mt-4 text-sm font-medium" style="color: var(--accent-primary)">打开工具</div>
       </router-link>
+
+      <router-link
+        to="/toolbox/qrcode"
+        class="card group block rounded-xl border p-5 no-underline"
+        style="border-color: var(--border)"
+      >
+        <div class="text-base font-semibold" style="color: var(--text-primary)">二维码生成器</div>
+        <p class="mt-2 text-sm" style="color: var(--text-secondary)">输入文本或链接，一键生成二维码，支持下载和复制。</p>
+        <div class="mt-4 text-sm font-medium" style="color: var(--accent-primary)">打开工具</div>
+      </router-link>
     </div>
   </section>
 </template>
